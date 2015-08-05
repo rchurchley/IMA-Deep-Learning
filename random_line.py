@@ -2,7 +2,8 @@ import cv2
 import numpy.random as rand
 
 
-def add_random_line(filename, max_thickness=40, min_thickness=10):
+def add_random_line(filename, outfile, max_thickness=40,
+                    min_thickness=10):
 
     # open file via opencv and retrieve information
     img = cv2.imread(filename)
@@ -19,8 +20,8 @@ def add_random_line(filename, max_thickness=40, min_thickness=10):
     # draw the line and save the image
     cv2.line(img, (x1, y1), (x2, y2), color=(255, 255, 255),
              thickness=thickness)
-    cv2.imwrite('test_ruined.jpg', img)
+    cv2.imwrite(outfile, img)
 
 if __name__ == '__main__':
     picture_file = 'test.jpg'
-    add_random_line(picture_file)
+    add_random_line(picture_file, 'test_ruined.jpg')
