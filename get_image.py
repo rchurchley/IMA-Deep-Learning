@@ -14,4 +14,8 @@ def grabImage(num_images):
         i += 1
 
 if __name__ == '__main__':
-    grabImage(int(sys.argv[1]))
+    if len(sys.argv) == 1:
+        num_images = 1
+    else:
+        num_images = int(sys.argv[1])
+    grabImage(num_images)
