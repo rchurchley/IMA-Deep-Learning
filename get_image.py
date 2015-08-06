@@ -1,50 +1,25 @@
-import wget
+#! /usr/bin/python
+
+import requests
+import subprocess
 import sys
-import cv2
 
-def grabImage(num_images):
-    '''
-    Grabs num_images images from the human_URLs.txt file
+def get_image_urls(category_id='n07942152', max_count=None, output_file='image_urls.txt'):
+	'''Get the urls of up to max_count images from ImageNet from the given category.'''
+	r = requests.get('http://www.image-net.org/api/text/imagenet.synset.geturls?wnid=' + category_id)
+	urls = [l.encode('ascii', 'ignore') for l in r.text.splitlines(True)]
+	with open(output_file, 'wb') as f:
+		if max_count:
+			f.writelines(urls[0:max_count])
+		else:
+			f.writelines(urls)
 
-    Returns a list of filenames of the image files.
-    '''
-    f = open('human_URLs.txt', 'r')
-    i = 0
-    filenames = []
-
-    # iterate through the defined number of image files
-    for line in f:
-        if i == num_images:
-            break
-        filenames.append(wget.download(line))
-        i += 1
-
-    return filenames
-
-
-def processFile(filename):
-    '''
-    Performs some kind of as of yet mildly undefined processing on the photo.
-    '''
-
-    # read in via opencv
-    img = cv2.imread(filename)
-    rows = img.shape[0]
-    cols = img.shape[1]
-
-    # do something!
-
-    # return something else!
-
+def get_images(filename='image_urls.txt', output_directory='downloads'):
+	subprocess.call(['wget', '--quiet', '--show-progress', '-i', filename, '-P', output_directory])
 
 if __name__ == '__main__':
-
-    if len(sys.argv) == 1:
-        num_images = 1
-    else:
-        num_images = int(sys.argv[1])
-    filenames = grabImage(num_images)
-
-    # do processing right here
-    for f in filenames:
-        f_edit = processFile(f)
+	if len(sys.argv) > 1:
+		get_image_urls(max_count=int(sys.argv[1]))
+	else:
+		get_image_urls(max_count=20)
+	get_images()
