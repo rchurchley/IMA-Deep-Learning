@@ -27,7 +27,6 @@ def autocrop(filename, outfile, out_height=300, out_width=300):
     vert_border = (cols - out_width) / 2.
     cropped_img = img[horiz_border:rows - horiz_border,
                       vert_border:cols - vert_border]
-    print outfile
     cv2.imwrite(outfile, cropped_img)
 
 
