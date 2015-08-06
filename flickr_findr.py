@@ -43,7 +43,19 @@ def getImages(image_urls):
     '''
     for url in image_urls:
         filename = wget.download(url)
-        subprocess.call(['mv', filename, 'flickr_images/' + filename + '.jpg'])
+
+        # parse the image url from the website HTML
+        bookend_1 = '<meta property="og:image" content="'
+        bookend_2 = '"  data-dynamic="true">'
+        with open(filename, 'r') as html_file:
+            html = html_file.read()
+            html_buf = html.split(bookend_1)[1]
+            pic_url = html_buf.split(bookend_2)[0]
+            pic_url = pic_url.rstrip()
+
+        pic_file = wget.download(pic_url)
+        subprocess.call(['mv', pic_file, 'flickr_images/' + pic_file])
+        subprocess.call(['rm', filename])
 
 
 if __name__ == '__main__':
