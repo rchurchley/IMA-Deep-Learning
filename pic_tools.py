@@ -117,11 +117,11 @@ if __name__ == '__main__':
             for i in range(4, argc):
                 filename = sys.argv[i]
                 print filename
-                outfile = filename.split('.')[0] + '_cropped.' \
+                outfile = filename.split('.')[0] + '_withline.' \
                     + filename.split('.')[1]
                 add_random_line(filename, outfile,
                                 max_thickness=max_thick,
-                                min_thick=min_thick)
+                                min_thickness=min_thick)
 
     if action == 'crop':
 
