@@ -4,7 +4,7 @@ from deepsix.collection import *
 if __name__ == '__main__':
     human_urls = deepsix.collection.flickr.urls_tagged(
         'face',
-        max_images=20,
+        max_images=5,
         apikey='Flickr_API_key.txt'
     )
 
@@ -13,9 +13,5 @@ if __name__ == '__main__':
     #     max_images=5
     # )
 
-    deepsix.collection.get_images_from_urls(
-        human_urls,
-        output_folder='images/raw',
-        filter_type='face'
-    )
-    deepsix.collection.crop_images()
+    deepsix.collection.get_images_from_urls(human_urls)
+    deepsix.collection.make_square_thumbnails()
