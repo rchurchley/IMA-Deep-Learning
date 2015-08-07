@@ -16,6 +16,6 @@ def get_images_from_urls(image_urls, output_folder="downloads",
         if filter_type:
             filter_result = filterImage(filename, filter_type=filter_type)
             print '{}: Filter result is {}'.format(filename, filter_result)
-            if not filter_result:
+            # if not filter_result:
                 # get rid of the file
-                subprocess.call(['rm', filename])
+                # subprocess.call(['rm', filename])
