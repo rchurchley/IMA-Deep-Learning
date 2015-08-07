@@ -1,6 +1,7 @@
 import cv2
 import sys
 import numpy.random as rand
+import os
 
 
 '''
@@ -103,9 +104,12 @@ if __name__ == '__main__':
                 # edit rest of files in place
                 for i in range(5, argc):
                     filename = sys.argv[i]
-                    add_random_line(filename, filename,
-                                    max_thickness=max_thick,
-                                    min_thickness=min_thick)
+                    try:
+                        add_random_line(filename, filename,
+                                        max_thickness=max_thick,
+                                        min_thickness=min_thick)
+                    except:
+                        print 'Picture error with {}'.format(filename)
 
             else:
                 print 'Error: Invalid option {}'.format(option[1])
@@ -116,12 +120,16 @@ if __name__ == '__main__':
             # no option, create new files
             for i in range(4, argc):
                 filename = sys.argv[i]
-                print filename
-                outfile = filename.split('.')[0] + '_withline.' \
-                    + filename.split('.')[1]
-                add_random_line(filename, outfile,
-                                max_thickness=max_thick,
-                                min_thickness=min_thick)
+                file_nopath = filename.split('/')[-1]
+                pwd = os.getcwd() + '/'
+                outfile = pwd + file_nopath.split('.')[0] + '_withline.' \
+                    + file_nopath.split('.')[1]
+                try:
+                    add_random_line(filename, outfile,
+                                    max_thickness=max_thick,
+                                    min_thickness=min_thick)
+                except:
+                    print 'Picture error with {}'.format(filename)
 
     if action == 'crop':
 
@@ -148,8 +156,11 @@ if __name__ == '__main__':
                 # edit rest of files in place
                 for i in range(5, argc):
                     filename = sys.argv[i]
-                    autocrop(filename, filename,
-                             out_height=height, out_width=width)
+                    try:
+                        autocrop(filename, filename,
+                                 out_height=height, out_width=width)
+                    except:
+                        print 'Error with picture: {}'.format(filename)
 
             else:
                 print 'Error: Invalid option {}'.format(option[1])
@@ -160,8 +171,12 @@ if __name__ == '__main__':
             # no option, create new files
             for i in range(4, argc):
                 filename = sys.argv[i]
-                print filename
-                outfile = filename.split('.')[0] + '_cropped.' \
-                    + filename.split('.')[1]
-                autocrop(filename, outfile, out_height=height,
-                         out_width=width)
+                file_nopath = filename.split('/')[-1]
+                pwd = os.getcwd() + '/'
+                outfile = pwd + file_nopath.split('.')[0] + '_cropped.' \
+                    + file_nopath.split('.')[1]
+                try:
+                    autocrop(filename, outfile, out_height=height,
+                             out_width=width)
+                except:
+                    print 'Error with picture: {}'.format(filename)
