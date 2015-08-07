@@ -13,7 +13,5 @@ if __name__ == '__main__':
         max_images=5
     )
 
-    deepsix.collection.get_images_from_urls(
-        human_urls,
-        output_folder='downloads'
-    )
+    deepsix.collection.get_images_from_urls(human_urls)
+    deepsix.collection.crop_images()
