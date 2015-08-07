@@ -4,10 +4,7 @@ import requests
 
 
 def session(filename):
-    '''
-    Grab the flickr api keys from an external file. Use it to start up an
-    instance of the Flickr API.
-    '''
+    """Open an instance of the Flickr API given an API key."""
     api_key_file = open(filename)
     api_keys = api_key_file.readlines()
     api_key = api_keys[0].rstrip()
@@ -18,10 +15,7 @@ def session(filename):
 
 
 def urls_tagged(keywords, max_images, apikey):
-    '''
-    Search for images via the API based on given keywords, return a list
-    of a given number of URLs for those keywords.
-    '''
+    """Return a list of urls of images with a given tag on Flickr."""
     flickr = session(apikey)
     # walk through a search query until we reach max_images
     i = 0
@@ -34,7 +28,7 @@ def urls_tagged(keywords, max_images, apikey):
         i += 1
 
     image_urls = []
-    # parse the image urls from the website HTML 
+    # parse the image urls from the website HTML
     for url in page_urls:
         r = requests.get(url)
         html = r.text
