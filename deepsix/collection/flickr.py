@@ -17,12 +17,12 @@ def session(filename):
     return flickr
 
 
-def urls_with_keywords(flickr, keywords, max_images):
+def urls_tagged(keywords, max_images, apikey):
     '''
     Search for images via the API based on given keywords, return a list
     of a given number of URLs for those keywords.
     '''
-
+    flickr = session(apikey)
     # walk through a search query until we reach max_images
     i = 0
     page_urls = []
