@@ -24,3 +24,7 @@ deepsix.collection.get_images_from_urls(human_urls, output_folder='downloads')
 This subpackage contains modules for creating anomalies in an image, in order to provide a training set of "bad" images.
 
 
+
+### `deepsix.preprocessing`
+
+This subpackage contains modules for loading images into nparrays and applying filters to examine various aspects of the image.
