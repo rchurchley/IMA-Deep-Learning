@@ -19,3 +19,8 @@ deepsix.collection.get_images_from_urls(human_urls, output_folder='downloads')
 
 
 
+### `deepsix.anomalize`
+
+This subpackage contains modules for creating anomalies in an image, in order to provide a training set of "bad" images.
+
+
