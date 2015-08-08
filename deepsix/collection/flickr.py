@@ -29,13 +29,20 @@ def urls_tagged(keywords, max_images, apikey):
 
     image_urls = []
     # parse the image urls from the website HTML
+    # in case of failure, a server error has occurred, so retry the download
     for url in page_urls:
-        r = requests.get(url)
-        html = r.text
-        bookend_1 = '<meta property="og:image" content="'
-        bookend_2 = '"  data-dynamic="true">'
-        html_buf = html.split(bookend_1)[1]
-        current_url = html_buf.split(bookend_2)[0].rstrip()
-        image_urls.append(current_url)
+        while True:
+            try:
+                r = requests.get(url)
+                html = r.text
+                bookend_1 = '<meta property="og:image" content="'
+                bookend_2 = '"  data-dynamic="true">'
+                html_buf = html.split(bookend_1)[1]
+                current_url = html_buf.split(bookend_2)[0].rstrip()
+                image_urls.append(current_url)
+            except:
+                print 'A server error has occurred! Retrying download...'
+                continue
+            break
 
     return image_urls
