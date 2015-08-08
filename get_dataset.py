@@ -28,7 +28,7 @@ if __name__ == '__main__':
         'person',
         max_images=40,
         apikey='Flickr_API_key.txt',
-        debug=debug
+        debug=True
     )
 
     # Download images, crop and resize them, and generate 'bad' copies.
