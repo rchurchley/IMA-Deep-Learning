@@ -1,13 +1,16 @@
 from PIL import Image, ImageDraw
 import numpy.random as rand
 import os
+from ..utils import images_in_directory
 
 
 def add_random_line(filename, output_filename, min_thickness, max_thickness,
                     debug=False):
+    """Add lines to an image, then save it elsewhere."""
     img = Image.open(filename)
     draw = ImageDraw.Draw(img)
-    # define random vertices for the rectilinear path to draw
+
+    # random vertices for the rectilinear path to draw
     points = [
         (rand.randint(0, img.size[0]), rand.randint(0, img.size[1])),
         (rand.randint(0, img.size[0]), rand.randint(0, img.size[1]))
@@ -22,16 +25,18 @@ def add_random_line(filename, output_filename, min_thickness, max_thickness,
 
 def add_random_lines(input_directory='images/thumbnails',
                      output_directory='images/anomalized',
+                     filename_list=None,
                      min_thickness=10,
                      max_thickness=40,
                      debug=False):
-    for filename in os.listdir(input_directory):
-        root, ext = os.path.splitext(filename)
-        if ext == '.jpg' or ext == '.jpeg':
-            if debug:
-                print 'Adding random line to {}'.format(filename)
+    """Add lines to a subset of images in a directory and save elsewhere."""
+    if not filename_list:
+        filename_list = images_in_directory(input_directory)
+    for filename in filename_list:
+        if debug:
+            print 'Adding random line to {}'.format(filename)
 
-            add_random_line(input_directory + "/" + filename,
-                            output_directory + "/" + filename,
-                            min_thickness,
-                            max_thickness)
+        add_random_line(filename=input_directory + "/" + filename,
+                        output_filename=output_directory + "/" + filename,
+                        min_thickness=min_thickness,
+                        max_thickness=max_thickness)
