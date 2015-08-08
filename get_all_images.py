@@ -1,7 +1,5 @@
 import deepsix.collection
 from deepsix.collection import *
-import deepsix.anomalize
-from deepsix.anomalize import *
 
 if __name__ == '__main__':
     human_urls = deepsix.collection.flickr.urls_tagged(
@@ -15,6 +13,4 @@ if __name__ == '__main__':
     #     max_images=5
     # )
 
-    deepsix.collection.get_images_from_urls(human_urls)
-    deepsix.collection.make_square_thumbnails()
-    deepsix.anomalize.add_random_lines()
+    deepsix.collection.process_images_from_urls(human_urls)
