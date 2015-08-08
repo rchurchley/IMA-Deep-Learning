@@ -29,6 +29,9 @@ def get_images_from_urls(urls,
 
         if debug:
             print 'Downloading picture from URL: {}'.format(url)
+        else:
+            sys.stdout.write('+')
+            sys.stdout.flush()
 
         response = requests.get(url, stream=True)
         if (
@@ -46,8 +49,6 @@ def get_images_from_urls(urls,
                     shutil.copyfileobj(response.raw, out_file)
         response.close()
         i += 1
-        sys.stdout.write('+')
-        sys.stdout.flush()
 
 
 def make_square_thumbnail(filename, output_filename, size, debug=False):
