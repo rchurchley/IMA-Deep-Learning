@@ -7,7 +7,7 @@ from ..utils import images_in_directory
 def add_random_line(filename, output_filename, min_thickness, max_thickness,
                     debug=False):
     """Add lines to an image, then save it elsewhere."""
-    img = Image.open(filename)
+    img = Image.open(filename).convert('RGB')
     draw = ImageDraw.Draw(img)
 
     # random vertices for the rectilinear path to draw
@@ -39,4 +39,5 @@ def add_random_lines(input_directory='images/thumbnails',
         add_random_line(filename=input_directory + "/" + filename,
                         output_filename=output_directory + "/" + filename,
                         min_thickness=min_thickness,
-                        max_thickness=max_thickness)
+                        max_thickness=max_thickness,
+                        debug=debug)
