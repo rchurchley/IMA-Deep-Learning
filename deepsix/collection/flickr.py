@@ -1,6 +1,6 @@
 import flickrapi
-import flickrapi.shorturl as short_url
-import requests
+# import flickrapi.shorturl as short_url
+# import requests
 
 
 def session(filename, debug=False):
@@ -16,22 +16,29 @@ def session(filename, debug=False):
     return flickr
 
 
-
 def urls_tagged(keywords, max_images, apikey, debug=False):
     """Return a list of urls of images with a given tag on Flickr."""
     flickr = session(apikey, debug=debug)
     # walk through a search query until we reach max_images
     i = 0
-    page_urls = []
+    image_urls = []
     for photo in flickr.walk(tag_mode='all', tags=keywords):
         if i == max_images:
             break
         if debug:
             print 'Retrieving URL {}/{}'.format(i + 1, max_images)
         photo_id = photo.get('id')
-        page_urls.append(short_url.url(photo_id))
+        secret = photo.get('secret')
+        farm_id = photo.get('farm')
+        server = photo.get('server')
+        # info = flickr.photos.getInfo(photo_id=photo_id)
+        # page_urls.append(short_url.url(photo_id))
+        url = 'https://farm{}.staticflickr.com/{}/{}_{}.jpg'
+        url = url.format(farm_id, server, photo_id, secret)
+        image_urls.append(url)
         i += 1
 
+    '''
     image_urls = []
     # parse the image urls from the website HTML
     # in case of failure, a server error has occurred, so retry the download
@@ -39,7 +46,7 @@ def urls_tagged(keywords, max_images, apikey, debug=False):
         while True:
             try:
                 r = requests.get(url)
-                html = r.text
+                html = r.text[:5000]
                 bookend_1 = '<meta property="og:image" content="'
                 bookend_2 = '"  data-dynamic="true">'
                 html_buf = html.split(bookend_1)[1]
@@ -53,5 +60,6 @@ def urls_tagged(keywords, max_images, apikey, debug=False):
                     print 'Retrying download...'
                 continue
             break
+    '''
 
     return image_urls
