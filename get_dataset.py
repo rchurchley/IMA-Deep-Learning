@@ -32,9 +32,9 @@ if __name__ == '__main__':
     )
 
     # Download images, crop and resize them, and generate 'bad' copies.
-    deepsix.collection.process_images_from_urls(human_urls,
-                                                size=256,
-                                                debug=True)
+    deepsix.collection.get_images_from_urls(human_urls)
+    deepsix.collection.make_small_squares(size=256)
+    deepsix.collection.anomalize.add_random_lines(debug=True)
 
     # Determine how many files we have downloaded, and get their filenames.
     filenames = deepsix.utils.images_in_directory('images/thumbnails')
