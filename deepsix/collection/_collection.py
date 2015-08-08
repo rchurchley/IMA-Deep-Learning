@@ -4,6 +4,7 @@ import os
 import sys
 from PIL import Image
 from . import anomalize
+from ..utils import images_in_directory
 
 # Disable "Unverified HTTPS Request warnings"
 requests.packages.urllib3.disable_warnings()
@@ -63,27 +64,29 @@ def make_square_thumbnail(filename, output_filename, size, debug=False):
 
 def make_square_thumbnails(input_directory='images/raw',
                            output_directory='images/thumbnails',
-                           size=200,
+                           filename_list=None,
+                           size=256,
                            debug=False):
-    """Make square thumbnails for all images in `input_directory`."""
-    for filename in os.listdir(input_directory):
-        root, ext = os.path.splitext(filename)
-        if ext == '.jpg' or ext == '.jpeg':
-            make_square_thumbnail(input_directory + "/" + filename,
-                                  output_directory + "/" + filename,
-                                  size, debug=debug)
+    """Make square thumbnails for a subset of images in an input directory."""
+    if not filename_list:
+        filename_list = images_in_directory(input_directory)
+    for filename in filename_list:
+        make_square_thumbnail(filename=input_directory + "/" + filename,
+                              output_filename=output_directory + "/" + filename,
+                              size=size,
+                              debug=debug)
 
 
-def process_images_from_urls(urls, filter=None, debug=False):
+def process_images_from_urls(urls, size=256, filter=None, debug=False):
 
     if debug:
-        print '\n---------------\nGetting images!\n---------------\n'
+        print 'Getting images...'
     get_images_from_urls(urls, filter=filter, debug=debug)
 
     if debug:
-        print '\n------------------\nMaking thumbnails!\n------------------\n'
-    make_square_thumbnails(debug=debug)
+        print 'Making thumbnails...'
+    make_square_thumbnails(size=size, debug=debug)
 
     if debug:
-        print '\n-------------\nAdding lines!\n-------------\n'
+        print 'Adding lines...'
     anomalize.add_random_lines(debug=debug)
