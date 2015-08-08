@@ -1,4 +1,5 @@
 import os
+import numpy as np
 
 
 def images_in_directory(input_directory):
@@ -12,3 +13,17 @@ def images_in_directory(input_directory):
         if ext == '.jpg' or ext == '.jpeg':
             result.append(filename)
     return result
+
+
+def random_zero_one_array(length):
+    """Return a nparray of shape (length,) with random 0-1 entries."""
+    return np.array([np.random.randint(0, 2) for _ in xrange(length)])
+
+
+def list_to_array(input):
+    """Return a 2D array whose rows are the elements of a list of nparrays.
+
+    Each of the input nparrays are unraveled into a row vector.
+    All of the nparrays must have the same number of entries.
+    """
+    return np.vstack([np.ravel(a) for a in input])
