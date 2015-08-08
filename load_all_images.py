@@ -1,6 +1,6 @@
-import os
+import numpy as np
 import deepsix.utils
-import deepsix.loading as d6l
+import deepsix.loading
 
 
 def construct_dataset(filenames):
@@ -9,10 +9,10 @@ def construct_dataset(filenames):
     normal_paths = ['images/thumbnails/' + s for s in filenames]
     anomalized_paths = ['images/anomalized/' + s for s in filenames]
     anomalization = deepsix.utils.random_zero_one_array(len(filenames))
-    paths = d6l.possibly_anomalized_paths(normal_paths,
-                                          anomalized_paths,
-                                          anomalization)
-    images = d6l.load_images(paths)
+    paths = deepsix.loading.possibly_anomalized_paths(normal_paths,
+                                                      anomalized_paths,
+                                                      anomalization)
+    images = deepsix.loading.load_images(paths)
     result = deepsix.utils.list_to_array(images)
     return result, anomalization
 
@@ -32,3 +32,21 @@ test_filenames = filenames[(train_n+validate_n):]
 train_data, train_labels = construct_dataset(train_filenames)
 validate_data, validate_labels = construct_dataset(validate_filenames)
 test_data, test_labels = construct_dataset(test_filenames)
+
+with open('data/train_x.npy', 'wb') as f:
+    np.save(f, train_data.astype(np.float32))
+
+with open('data/train_y.npy', 'wb') as f:
+    np.save(f, train_labels.astype(np.float32))
+
+with open('data/val_x.npy', 'wb') as f:
+    np.save(f, validate_data.astype(np.float32))
+
+with open('data/val_y.npy', 'wb') as f:
+    np.save(f, validate_labels.astype(np.float32))
+
+with open('data/test_x.npy', 'wb') as f:
+    np.save(f, test_data.astype(np.float32))
+
+with open('data/test_y.npy', 'wb') as f:
+    np.save(f, test_labels.astype(np.float32))
