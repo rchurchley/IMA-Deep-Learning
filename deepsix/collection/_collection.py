@@ -16,11 +16,11 @@ def get_images_from_urls(id_url_generator,
 
     Files are saved to `output_directory`, named according to their ID.
 
-    Keyword arguments:
-    id_url_generator -- a generator yielding pairs of strings (id, url).
-    output_directory -- an existing folder, no trailing slash, for images.
-    filter           -- a function taking an Image and returning a boolean.
-                        Images returning False will not be saved.
+    Args:
+        id_url_generator (generator): Pairs of strings (id, url).
+        output_directory (str): An existing folder to save images to. Does not
+            include a trailing slash.
+        filter (function: Image -> bool): Decides which images to process.
     """
     i = 0
     for uid, url in id_url_generator:
@@ -51,7 +51,7 @@ def get_images_from_urls(id_url_generator,
 
 
 def make_small_square(filename, output_filename, size):
-    """Crop the image in `filename` square, then shrink and save it."""
+    """Crop an image to square aspect ratio, then resize it to (size, size)."""
     img = Image.open(filename)
     img = img.crop(box=(0, 0, min(img.size), min(img.size)))
     img = img.resize(size=(size, size))
@@ -62,7 +62,20 @@ def make_small_squares(input_directory='images/raw',
                        output_directory='images/thumbnails',
                        filename_list=None,
                        size=256):
-    """Make square thumbnails for a subset of images in an input directory."""
+    """Make square thumbnails for a subset of images in an input directory.
+
+    Output files will be saved with the same name as the input files, but
+    copied to a different directory.
+
+    Args:
+        input_directory (str): A folder containing images to be resized.
+        output_directory (str): An existing folder to save images to.
+        filename_list (list(str)): A list of filenames from input_directory to
+            be resized. Filenames are not full paths and should not include the
+            prefix input_directory. If no list is provided, all images in
+            input_directory will be processed.
+        size (int): The side length of the square image to be saved.
+    """
     if not filename_list:
         filename_list = images_in_directory(input_directory)
     i = 0

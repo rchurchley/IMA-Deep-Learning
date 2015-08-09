@@ -1,6 +1,4 @@
 import flickrapi
-# import flickrapi.shorturl as short_url
-# import requests
 
 
 def session(filename):
@@ -16,7 +14,15 @@ def session(filename):
 def urls_tagged(keywords, api_key):
     """Return a generator over images with a given tag on Flickr.
 
-    Each element of the generator is a tuple of the form id, url.
+    Args:
+        keywords (str): A comma-separated list of Flickr tags.
+        api_key (str): The path to a valid Flickr API key.
+
+    Yields:
+        Pairs photo_id, photo_url for each photo returned from the Flickr API.
+        The photo_id is the unique ID assigned by Flickr to each photo, and
+        the photo_url is the url to download the image file.
+
     """
     flickr = session(api_key)
     url_template = 'https://farm{}.staticflickr.com/{}/{}_{}.jpg'
