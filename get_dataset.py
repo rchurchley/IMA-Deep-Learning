@@ -19,35 +19,24 @@ def construct_dataset(filenames):
     return result, anomalization
 
 
-if __name__ == '__main__':
-
-    # Get a list of URLs of images to download.
-
-    # human_urls = deepsix.collection.imagenet.urls_tagged('n07942152')
-    human_urls = deepsix.collection.flickr.urls_tagged(
-        'person',
-        max_images=40,
-        apikey='Flickr_API_key.txt',
-        debug=True
-    )
-
-    # Download images, crop and resize them, and generate 'bad' copies.
-    deepsix.collection.get_images_from_urls(human_urls)
-    deepsix.collection.make_small_squares(size=256)
-    deepsix.collection.anomalize.add_random_lines(debug=True)
-
+def save_datasets(train_fraction, validate_fraction):
     # Determine how many files we have downloaded, and get their filenames.
     filenames = deepsix.utils.images_in_directory('images/thumbnails')
     number_of_images = len(filenames)
 
     # Set number of images to reserve for training and validating.
     # The remaining images will be used for testing.
-    train_n = 8 * number_of_images / 10  # integer division
-    validate_n = 1 * number_of_images / 10
+    train_n = int(np.floor(train_fraction * number_of_images))
+    validate_n = int(np.floor(validate_fraction * number_of_images))
 
     train_filenames = filenames[0:train_n]
     validate_filenames = filenames[train_n:(train_n+validate_n)]
     test_filenames = filenames[(train_n+validate_n):]
+
+    if any([len(train_filenames) == 0,
+           len(validate_filenames) == 0,
+           len(test_filenames) == 0]):
+        raise IndexError('There are not enough files in images/thumbnails.')
 
     # Construct datasets
     train_data, train_labels = construct_dataset(train_filenames)
@@ -57,18 +46,29 @@ if __name__ == '__main__':
     # Save datasets to data/*
     with open('data/train_x.npy', 'wb') as f:
         np.save(f, train_data.astype(np.float32))
-
     with open('data/train_y.npy', 'wb') as f:
         np.save(f, train_labels.astype(np.float32))
-
     with open('data/val_x.npy', 'wb') as f:
         np.save(f, validate_data.astype(np.float32))
-
     with open('data/val_y.npy', 'wb') as f:
         np.save(f, validate_labels.astype(np.float32))
-
     with open('data/test_x.npy', 'wb') as f:
         np.save(f, test_data.astype(np.float32))
-
     with open('data/test_y.npy', 'wb') as f:
         np.save(f, test_labels.astype(np.float32))
+
+
+if __name__ == '__main__':
+
+    # Get a list of URLs of images to download.
+    human_urls = deepsix.collection.flickr.urls_tagged(
+        'person',
+        api_key='Flickr_API_key.txt')
+
+    # Download images, crop and resize them, and generate 'bad' copies.
+    deepsix.collection.get_images_from_urls(human_urls, max_count=10)
+    deepsix.collection.make_small_squares(size=256)
+    deepsix.collection.anomalize.add_random_lines()
+
+    # Construct training, validation, and test datasets and save them.
+    save_datasets(train_fraction=0.8, validate_fraction=0.1)
