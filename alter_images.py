@@ -7,7 +7,7 @@ if __name__ == '__main__':
     if len(sys.argv) == 1:
         size = 256
     else:
-        size = sys.argv[1]
+        size = int(sys.argv[1])
 
     thumbnail_directory = 'images/{}'.format(size)
     anomalized_directory = 'images/{}-anomalized'.format(size)
