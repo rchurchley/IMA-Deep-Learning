@@ -17,6 +17,9 @@ def get_images_from_urls(id_url_generator,
 
     Args:
         id_url_generator (generator): Pairs of strings (id, url).
+        max_count (int): The maximum number of pictures to download. This may
+            not be the same as the number of images actually downloaded, if the
+            Flickr API returns duplicate images or invalid responses.
         output_directory (str): An existing folder to save images to. Does not
             include a trailing slash.
     """
@@ -59,7 +62,10 @@ def alter_images(procedure,
     copied to a different directory.
 
     Args:
-        procedure (function): One of the above functions.
+        procedure (function: void): A function that saves an altered image to
+            a given path. The function should have keyword arguments args,
+            path, output_path, output_format. Some functions of this form
+            can be found in deepsix.anomalies.
         args (list): A list of arguments to pass to procedure.
         input_directory (str): A folder containing images to be altered.
         output_directory (str): An existing folder to save images to.
@@ -70,15 +76,20 @@ def alter_images(procedure,
     i = 0
     n = len(filename_list)
     for filename in filename_list:
-        i += 1
-        print '{}/{}: Applying {} to {}'.format(i, n, procedure.__name__, filename)
-        input_path = '{}/{}'.format(input_directory, filename)
         root, ext = os.path.splitext(filename)
+        i += 1
+
+        print '{}/{}: Applying {} to {}'.format(i,
+                                                n,
+                                                procedure.__name__,
+                                                root)
+
+        input_path = '{}/{}'.format(input_directory, filename)
         output_path = '{}/{}.{}'.format(output_directory,
                                         root,
                                         output_format.lower())
 
-        procedure(args,
+        procedure(args=args,
                   path=input_path,
                   output_path=output_path,
                   output_format=output_format)
