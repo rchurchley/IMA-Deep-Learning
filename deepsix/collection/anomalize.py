@@ -1,7 +1,7 @@
 from ..utils import images_in_directory, ensure_directory
 from PIL import Image, ImageDraw
 import numpy as np
-
+import os
 
 def add_random_line(filename, output_filename, min_thickness, max_thickness):
     """Add lines to an image, then save it to output_filename."""
@@ -54,3 +54,24 @@ def add_random_lines(input_directory='images/thumbnails',
                         output_filename=output_directory + "/" + filename,
                         min_thickness=min_thickness,
                         max_thickness=max_thickness)
+
+
+def add_circles(input_directory, output_directory):
+    filename_list = images_in_directory(input_directory)
+    i = 0
+    n = len(filename_list)
+    for filename in filename_list:
+        i += 1
+        root, ext = os.path.splitext(filename)
+        print '{}/{}: Adding circle to {}'.format(i, n, root)
+
+        add_circle(filename=input_directory + "/" + filename, output_filename=output_directory + "/" + root + ".bmp")
+
+
+def add_circle(filename, output_filename):
+    img = Image.open(filename).convert('RGB')
+    draw = ImageDraw.Draw(img)
+    draw.ellipse([10,10,15,15], fill=(255,255,255))
+    del draw
+    img.save(output_filename, 'BMP')
+

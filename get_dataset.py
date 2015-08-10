@@ -6,12 +6,12 @@ import numpy as np
 import sys
 
 
-def construct_dataset(filenames):
+def construct_dataset(good_filenames, bad_filenames):
     """Return a 2d nparray encoding images and a 1d binary array with labels.
     """
-    normal_paths = ['images/{}/{}'.format(size, s) for s in filenames]
-    anomalized_paths = ['images/{}-anomalized/{}'.format(size, s) for s in filenames]
-    anomalization = deepsix.utils.random_zero_one_array(len(filenames))
+    normal_paths = ['images/28/{}'.format(s) for s in good_filenames]
+    anomalized_paths = ['images/28-anomalized/{}'.format(s) for s in bad_filenames]
+    anomalization = deepsix.utils.random_zero_one_array(len(normal_paths))
     paths = deepsix.loading.possibly_anomalized_paths(normal_paths,
                                                       anomalized_paths,
                                                       anomalization)
@@ -21,16 +21,21 @@ def construct_dataset(filenames):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) == 1:
-        size = 256
+    if len(sys.argv) < 3:
+        good_directory = 'images/256'
+        bad_directory = 'images/256-anomalized'
+        output_directory = 'data'
     else:
-        size = sys.argv[1]
+        good_directory = sys.argv[1]
+        bad_directory = sys.argv[2]
+        output_directory = sys.argv[3]
 
     train_fraction = 0.8
     validate_fraction = 0.1
 
     # Determine how many files we have downloaded, and get their filenames.
-    filenames = deepsix.utils.images_in_directory('images/{}'.format(size))
+    filenames = deepsix.utils.images_in_directory(good_directory)
+    bad_filenames = deepsix.utils.images_in_directory(bad_directory)
     number_of_images = len(filenames)
 
     # Set number of images to reserve for training and validating.
@@ -39,18 +44,21 @@ if __name__ == '__main__':
     validate_n = int(np.floor(validate_fraction * number_of_images))
 
     train_filenames = filenames[0:train_n]
+    train_bad_filenames = bad_filenames[0:train_n]
     validate_filenames = filenames[train_n:(train_n+validate_n)]
+    validate_bad_filenames = bad_filenames[train_n:(train_n+validate_n)]
     test_filenames = filenames[(train_n+validate_n):]
+    test_bad_filenames = bad_filenames[(train_n+validate_n):]
 
     if any([len(train_filenames) == 0,
            len(validate_filenames) == 0,
            len(test_filenames) == 0]):
-        raise IndexError('There are not enough files in images/{}.'.format(size))
+        raise IndexError('There are not enough files in {}.'.format(good_directory))
 
     # Construct datasets
-    train_data, train_labels = construct_dataset(train_filenames)
-    validate_data, validate_labels = construct_dataset(validate_filenames)
-    test_data, test_labels = construct_dataset(test_filenames)
+    train_data, train_labels = construct_dataset(train_filenames, train_bad_filenames)
+    validate_data, validate_labels = construct_dataset(validate_filenames, validate_bad_filenames)
+    test_data, test_labels = construct_dataset(test_filenames, test_bad_filenames)
 
     # Save datasets to data/*
     with open('data/train_x.npy', 'wb') as f:

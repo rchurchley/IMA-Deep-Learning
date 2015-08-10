@@ -10,7 +10,7 @@ def images_in_directory(input_directory):
     result = []
     for filename in os.listdir(input_directory):
         root, ext = os.path.splitext(filename)
-        if ext == '.jpg' or ext == '.jpeg':
+        if ext == '.jpg' or ext == '.jpeg' or ext == '.bmp':
             result.append(filename)
     return result
 
