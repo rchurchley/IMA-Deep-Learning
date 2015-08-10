@@ -1,4 +1,4 @@
-from utils import images_in_directory, ensure_directory
+from utils import ensure_directory
 from PIL import Image, ImageDraw
 import numpy as np
 

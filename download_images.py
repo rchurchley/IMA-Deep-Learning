@@ -5,7 +5,7 @@ import sys
 if __name__ == '__main__':
     if len(sys.argv) < 3:
         keywords = 'person'
-        count = 10
+        count = 20
     else:
         keywords = sys.argv[1]
         count = int(sys.argv[2])

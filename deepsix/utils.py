@@ -3,15 +3,15 @@ import numpy
 
 
 def images_in_directory(input_directory):
-    """Return a list of filenames in `input_directory` with an image extension.
+    """Return a dictionary of filename roots and extensions for only images.
 
     Extensions are not case-sensitive and include: jpg, jpeg, bmp, png.
     """
-    result = []
+    result = {}
     for filename in os.listdir(input_directory):
         root, ext = os.path.splitext(filename)
         if ext.lower() in set(['.jpg', '.jpeg', '.bmp', '.png']):
-            result.append(filename)
+            result[root] = ext
     return result
 
 

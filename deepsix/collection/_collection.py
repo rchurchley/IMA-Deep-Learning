@@ -1,7 +1,6 @@
 import requests
 import shutil
 import sys
-import os
 from ..utils import images_in_directory, ensure_directory
 
 # Disable "Unverified HTTPS Request warnings"
@@ -24,11 +23,11 @@ def get_images_from_urls(id_url_generator,
             include a trailing slash.
     """
     ensure_directory(output_directory)
-    already_downloaded = set(images_in_directory(output_directory))
+    already_downloaded = images_in_directory(output_directory)
     i = 0
     for uid, url in id_url_generator:
         i += 1
-        if '{}.jpg'.format(uid) in already_downloaded:
+        if uid in already_downloaded:
             print '{}: Already downloaded {}'.format(i, uid)
         else:
             print '{}: Downloading {}'.format(i, url)
@@ -39,10 +38,11 @@ def get_images_from_urls(id_url_generator,
                     response.status_code == 200 and
                     response.headers['Content-Type'] == 'image/jpeg'
                 ):
-                    output_filename = '{}/{}.jpg'.format(output_directory, uid)
+                    output_filename = '{}/{}.jpeg'.format(output_directory, uid)
                     with open(output_filename, "wb") as out_file:
                         shutil.copyfileobj(response.raw, out_file)
                 response.close()
+                already_downloaded[uid] = '.jpeg'
             except:
                 e = sys.exc_info()[0]
                 print "Error: {}".format(e)
@@ -71,20 +71,18 @@ def alter_images(procedure,
         output_directory (str): An existing folder to save images to.
         output_format (str): The image format to save to, e.g. 'JPEG', 'BMP'.
     """
-    filename_list = images_in_directory(input_directory)
+    filename_dict = images_in_directory(input_directory)  # { id: extension }
     ensure_directory(output_directory)
     i = 0
-    n = len(filename_list)
-    for filename in filename_list:
-        root, ext = os.path.splitext(filename)
+    n = len(filename_dict)
+    for root, ext in filename_dict.iteritems():
         i += 1
-
         print '{}/{}: Applying {} to {}'.format(i,
                                                 n,
                                                 procedure.__name__,
                                                 root)
 
-        input_path = '{}/{}'.format(input_directory, filename)
+        input_path = '{}/{}{}'.format(input_directory, root, ext)
         output_path = '{}/{}.{}'.format(output_directory,
                                         root,
                                         output_format.lower())
