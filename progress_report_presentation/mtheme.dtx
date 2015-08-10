@@ -1,0 +1,362 @@
+%% ---------------------------------------------------------------------------
+%% Copyright 2015 Matthias Vogelgesang and the LaTeX community. A full list of
+%% contributors can be found at
+%%
+%%     https://github.com/matze/mtheme/graphs/contributors
+%%
+%% and the original template was based on the HSRM theme by Benjamin Weiss.
+%%
+%% This work is licensed under a Creative Commons Attribution-ShareAlike 4.0
+%% International License (https://creativecommons.org/licenses/by-sa/4.0/).
+%% ---------------------------------------------------------------------------
+
+\documentclass{ltxdoc}
+%\OnlyDescription
+
+\usepackage{parskip}
+\usepackage{setspace}
+\usepackage{xspace}
+\onehalfspacing
+
+\usepackage{fontspec}
+\setmainfont[BoldItalicFont={Fira Sans Italic},%
+             ItalicFont={Fira Sans Light Italic},%
+             BoldFont={Fira Sans}]{Fira Sans Light}
+\setmonofont{Fira Mono}
+\defaultfontfeatures{Ligatures=TeX}
+
+\usepackage{enumitem}
+\setlist[itemize]{noitemsep}
+\setlist[enumerate]{noitemsep}
+
+\usepackage{xcolor}
+\definecolor{mDarkBrown}{HTML}{604c38}
+\definecolor{mDarkTeal}{HTML}{23373b}
+\definecolor{mLightBrown}{HTML}{EB811B}
+\definecolor{mLightGreen}{HTML}{14B03D}
+\definecolor{mBackground}{HTML}{FFFFFF}
+
+\usepackage{listings}
+\lstset{%
+  language=[LaTeX]{TeX},
+  basicstyle=\ttfamily,
+  keywordstyle=\color{mLightBrown}\bfseries,
+  commentstyle=\color{mLightGreen},
+  stringstyle=\color{mLightGreen},
+  backgroundcolor=\color{mBackground},
+  numbers=none,
+  numberstyle=\tiny\ttfamily,
+  stepnumber=2,
+  showspaces=false,
+  showstringspaces=false,
+  showtabs=false,
+  frame=none,
+  framerule=1pt,
+  tabsize=2,
+  rulesep=5em,
+  captionpos=b,
+  breaklines=true,
+  breakatwhitespace=false,
+  framexleftmargin=0em,
+  framexrightmargin=0em,
+  xleftmargin=0em,
+  xrightmargin=0em,
+  aboveskip=1em,
+  belowskip=1em,
+  morekeywords={usetheme,institute,maketitle,@metropolis@titleformat,plain,setbeamercolor,metroset},
+}
+\lstMakeShortInline|
+
+\usepackage[colorlinks=true,
+            linkcolor=mLightBrown,
+            menucolor=mLightBrown,
+            pagecolor=mLightBrown,
+            urlcolor=mLightBrown]{hyperref}
+
+\newcommand{\DescribeOption}[4]{
+  \DescribeMacro{#1}
+  \begin{minipage}[t]{\textwidth}
+    \textit{\textbf{\textcolor{mLightGreen}{#2}}}\dotfill\,#3\par
+    \begingroup
+    \vspace{0.5em}#4\par
+    \endgroup
+  \end{minipage}
+}
+
+\newcommand{\themename}{\textsc{metropolis}\xspace}
+
+\GetFileInfo{beamerthemem.dtx}
+\title{Modern Beamer Presentations\\with the\\\themename package}
+\author{Matthias Vogelgesang \\ \url{matthias.vogelgesang@gmail.com}}
+\date{v0.x.x}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+Beamer is an awesome way to make presentations with LaTeX. But the stock themes
+do not necessarily look particularly nice and the custom themes often scream
+“Beamer” at first sight. The goal of \themename is to provide a modern Beamer
+theme with minimal visual noise. It provides section slides with a neat progress
+bar and it is intended to be used with
+\href{https://www.mozilla.org/en-US/styleguide/products/firefox-os/typeface/}
+{Fira Sans}, a gorgeous typeface commissioned by Mozilla and designed by
+\href{http://www.carrois.com/fira-3-1/}{Carrois}. Hence to get the best results
+you should have installed the Fira typeface and use XeTeX to typeset your
+slides. Nevertheless this is no hard dependency. The theme also works fine with
+pdfTeX and the Computer Modern typeface.
+
+The codebase is maintained on \href{https://github.com/matze/mtheme}{GitHub}.
+So if you have issues, find mistakes in the manual or want to contribute – to
+make the theme even better – get in touch there.
+
+
+\section{Getting Started}
+
+\subsection{Installation}
+
+The \themename theme uses Make as build system. Hence the installation is very
+straight forward. Simply type
+\begin{lstlisting}
+$ make
+$ make install
+\end{lstlisting}
+in the top directory and all the files will be created and installed on your
+computer. The complete list of make rules is as follows:
+
+\begin{description}
+  \item[all] \hfill \\
+  Build the theme, the manual and the demo presentation.
+  \item[install] \hfill \\
+  Install the theme into your local texmf folder.
+  \item[uninstall] \hfill \\
+  Remove the theme from your local texmf folder.
+  \item[sty] \hfill \\
+  Creat the package files.
+  \item[doc] \hfill \\
+  Build the documentation.
+  \item[demo] \hfill \\
+  Build the demo presentation.
+  \item[demo-min] \hfill \\
+  Build the minimal demo presentation.
+  \item[ctan] \hfill \\
+  Create a package for CTAN distribution.
+\end{description}
+
+
+\subsection{Dependencies}
+
+\begin{itemize}
+  \item XeLaTeX
+  \item \href{https://github.com/mozilla/Fira}{Fira Sans} and Mono font
+  \item TikZ
+\end{itemize}
+
+Depending on the Linux distribution, the packaged name of |Fira Sans| might be
+|Fira Sans OT| instead of |Fira Sans|. In that case, you may have to edit
+|beamerfontthememetropolis.dtx|. You may also need to install Fira Sans; see
+the |contrib/| directory for more. Users of Debian or Ubuntu can also install
+this \href{https://launchpad.net/\%7Eedd/+archive/ubuntu/misc/+files/latex-mtheme_0.1.0vidid1_all.deb}{.deb package} containing the theme files as well
+as the Fira Sans font files.
+
+
+\subsection{Pandoc}
+
+To use this theme with \href{http://johnmacfarlane.net/pandoc/}{Pandoc}-based
+presentations, you can run the following command
+
+\begin{lstlisting}
+$ pandoc -t beamer --latex-engine=xelatex -V theme:m -o output.pdf input.md
+\end{lstlisting}
+
+
+\subsection{A Minimal Example}
+
+To get started with the theme is very simple. The following code shows a
+minimal example of a Beamer presentation using \themename.
+
+\begin{lstlisting}
+\documentclass[10pt]{beamer}
+\usetheme{m}                          % load mtheme
+\title{A modern beamer theme}         % define title
+\date{\today}                         % define date
+\author{Matthias Vogelgesang}         % define author
+\institute{Institute}                 % define institute
+\begin{document}
+\maketitle                            % create titlepage
+\section{First Section}               % create section
+\begin{frame}{First Frame}            % first frame
+  Lorem ipsum dolor sit amet, ...
+\end{frame}
+\begin{frame}{Second Frame}           % second frame
+  Lorem ipsum dolor sit amet, ...
+\end{frame}
+\end{document}
+\end{lstlisting}
+
+\section{Customization}
+\subsection{Package options}
+The theme provides a number of options. The options use a key=value interface.
+So every option is controlled by a key its value. To use an option you can
+either provide a comma separated list of options when invoking
+\textsc{mtheme} in the preamble of the presentation.
+\begin{lstlisting}
+\usetheme[<key=value list>]{m}
+\end{lstlisting}
+Or you can set them at any time with the |\metroset| macro.
+\begin{lstlisting}
+\metroset[<key=value list>]
+\end{lstlisting}
+To set an option on a specific sub-package only you have to add the
+corresponding prefix (inner, outer, color), e.g.
+\begin{lstlisting}
+\metroset[inner/block=fill]
+\end{lstlisting}
+The list of options is structured as shown in the following example.
+
+\DescribeOption{key}{list of possible values}{default value}{
+  A short description of the option.
+}
+
+Although the options are grouped into the corresponding packages every option
+can and in most cases should be set on the main theme directly. If an option
+is listed in multiple sub-packages, setting it on the main theme will set the
+option on every sub-package accordingly.
+
+\subsubsection{Main theme}
+\DescribeOption{everytitleformat}{regular, lowercase, uppercase}{lowercase}{
+  Shortcut option to change the case style of all titles together.
+}
+
+\DescribeOption{plainformat}{regular, lowercase, uppercase}{lowercase}{
+  Control the case style of the plain title.
+}
+
+\subsubsection{Inner theme}
+\DescribeOption{block}{transparent, fill}{transparent}{
+  This option controls the block background. It can either be filled with a
+  light grey or be transparent.
+}
+
+\DescribeOption{sectionpage}{none, progressbar}{progressbar}{
+  Adds a thin progress bar similar to the section progress bar underneath each frame title.
+}
+
+\DescribeOption{titleformat}{regular, lowercase, uppercase}{lowercase}{
+  Control the case style of the title.
+}
+
+\DescribeOption{sectiontitleformat}{regular, lowercase, uppercase}{lowercase}{
+  Control the case style of the section title.
+}
+
+\subsubsection{Outer theme}
+\DescribeOption{numbering}{none, counter, fraction}{counter}{
+  In the bottom right corner of each frame the current frame number is
+  displayed. This can be disabled or the total framenumber can be added
+  additionally.
+}
+
+\DescribeOption{progressbar}{none, head, frametitle, foot}{none}{
+  Adds a progress bar to the top of each frame (|head|), the bottom of each
+  frame (|foot|), or directly below each frame title (|frametitle|).
+}
+
+\DescribeOption{frametitleformat}{regular, lowercase, uppercase}{lowercase}{
+  Control the case style of the frame title.
+}
+
+\subsubsection{Color theme}
+\DescribeOption{block}{transparent, fill}{transparent}{
+  This option controls the block background. It can either be filled with a
+  light grey or be transparent.
+}
+
+\DescribeOption{background}{dark, light}{light}{
+  This option defines whether the background shall be dark and the foreground
+  be light or vice versa.
+}
+
+\subsection{Color Customization}
+
+The included \themename color theme is used by default, but its colors can be
+easily changed to suit your tastes. All of the theme's styles are defined in
+terms of three beamer colors:
+\begin{itemize}
+    \item |normal text| (dark fg, light bg)
+    \item |alerted text| (colored fg, should be visible against dark or light)
+    \item |example text| (colored fg, should be visible against dark or light)
+\end{itemize}
+An easy way to customize the theme is to redefine these colors using
+
+\begin{lstlisting}
+\setbeamercolor{ ... }{ fg= ... , bg= ... }
+\end{lstlisting}
+in your preamble. For greater customization, you can redefine any of the other
+stock beamer colors. In addition to the stock colors the theme defines a number
+of \themename specific colors, which can also be redefined to your liking.
+
+\begin{lstlisting}
+\setbeamercolor{progress bar}{ ... }
+\setbeamercolor{title separator}{ ... }
+\setbeamercolor{progress bar in head/foot}{ ... }
+\setbeamercolor{progress bar in section page}{ ... }
+\end{lstlisting}
+
+\subsection{Commands}
+
+The |\plain{title=[]}{<body>}| command sets a slide in plain dark colors which
+can be useful to focus attention on a single sentence or image.
+
+\subsection{Paul Tol's colors: a \texttt{pgfplots} theme}
+
+A good presentation uses colors that are
+
+\begin{itemize}
+  \item distinct from each other as much as possible, and
+  \item distinct from black and white,
+  \item under many different lighting and display environments, and
+  \item to color-blind viewers,
+  \item all while matching well together.
+\end{itemize}
+
+In a \href{https://personal.sron.nl/~pault/colourschemes.pdf}{technical note}
+for SRON, Paul Tol proposed a palette of colors satisfying these constraints.
+The sub-package |pgfplotsthemetol| defines palettes for |pgfplots| charts
+based on Tol's work. Use the |mlineplot| key to plot line data and |mbarplot|
+or horizontal |mbarplot| to plot bar charts.
+
+
+\section{Known Issues}
+
+The |\plain| command does not work if you override the \textsc{metropolis}
+color theme with the default beamer color theme |fly|.
+
+\section{License}
+
+The theme itself is licensed under a
+\href{http://creativecommons.org/licenses/by-sa/4.0/}{Creative Commons
+Attribution-ShareAlike 4.0 International License}. This means that if you change
+the theme and re-distribute it, you must retain the copyright notice header and
+license it under the same CC-BY-SA license. This does not affect the
+presentation that you create with the theme.
+
+
+\section{Contributors}
+
+For a full list of contributors please visit the
+\href{https://github.com/matze/mtheme/graphs/contributors}{GitHub Repository}.
+
+
+\section{Implementation}
+
+\DocInput{beamerthemem.dtx}
+\DocInput{beamerinnerthememetropolis.dtx}
+\DocInput{beamerouterthememetropolis.dtx}
+\DocInput{beamerfontthememetropolis.dtx}
+\DocInput{beamercolorthememetropolis.dtx}
+\DocInput{pgfplotsthemetol.dtx}
+
+\end{document}
