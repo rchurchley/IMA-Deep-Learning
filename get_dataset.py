@@ -9,8 +9,8 @@ import sys
 def construct_dataset(good_filenames, bad_filenames):
     """Return a 2d nparray encoding images and a 1d binary array with labels.
     """
-    normal_paths = ['images/28/{}'.format(s) for s in good_filenames]
-    anomalized_paths = ['images/28-anomalized/{}'.format(s) for s in bad_filenames]
+    normal_paths = ['primitive/thumbnails/{}'.format(s) for s in good_filenames]
+    anomalized_paths = ['primitive/anomalized/{}'.format(s) for s in bad_filenames]
     anomalization = deepsix.utils.random_zero_one_array(len(normal_paths))
     paths = deepsix.loading.possibly_anomalized_paths(normal_paths,
                                                       anomalized_paths,
@@ -22,9 +22,9 @@ def construct_dataset(good_filenames, bad_filenames):
 
 if __name__ == '__main__':
     if len(sys.argv) < 3:
-        good_directory = 'images/256'
-        bad_directory = 'images/256-anomalized'
-        output_directory = 'data'
+        good_directory = 'primitive/thumbnails'
+        bad_directory = 'primitive/anomalized'
+        output_directory = '/primitive/data'
     else:
         good_directory = sys.argv[1]
         bad_directory = sys.argv[2]
