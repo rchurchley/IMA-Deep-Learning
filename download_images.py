@@ -6,7 +6,7 @@ if __name__ == '__main__':
     if len(sys.argv) == 1:
         count = 10
     else:
-        count = sys.argv[1]
+        count = int(sys.argv[1])
 
     # Get a list of URLs of images to download.
     human_urls = deepsix.collection.flickr.urls_tagged(
