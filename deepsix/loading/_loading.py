@@ -1,23 +1,23 @@
 from PIL import Image
-import numpy as np
+import numpy
 # import cv2
 
 from ..utils import images_in_directory
 
 
-def load_image(filename):
+def load_image(path):
     """Return a 2d nparray encoding an image.
 
     Each entry of the array is an integer from 0 to 255 encoding the greyscale
     value of a pixel.
     """
-    return np.array(Image.open(filename).convert('L'))
-    # return cv2.imread(filename, 0)  # twice as fast but not always available
+    return numpy.array(Image.open(path).convert('L'))
+    # return cv2.imread(path, 0)  # twice as fast but not always available
 
 
-def load_images(filename_list):
+def load_images(path_list):
     """Return a list of 2d nparrays encoding a list of images."""
-    return [load_image(img) for img in filename_list]
+    return [load_image(img) for img in path_list]
 
 
 def possibly_anomalized_paths(false_values,
