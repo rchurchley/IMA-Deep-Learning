@@ -3,13 +3,14 @@ import deepsix.collection
 from deepsix.collection import *
 import deepsix.loading
 import numpy as np
+import sys
 
 
 def construct_dataset(filenames):
     """Return a 2d nparray encoding images and a 1d binary array with labels.
     """
-    normal_paths = ['images/thumbnails/' + s for s in filenames]
-    anomalized_paths = ['images/anomalized/' + s for s in filenames]
+    normal_paths = ['images/{}/{}'.format(size, s) for s in filenames]
+    anomalized_paths = ['images/{}-anomalized/{}'.format(size, s) for s in filenames]
     anomalization = deepsix.utils.random_zero_one_array(len(filenames))
     paths = deepsix.loading.possibly_anomalized_paths(normal_paths,
                                                       anomalized_paths,
@@ -20,34 +21,31 @@ def construct_dataset(filenames):
 
 
 if __name__ == '__main__':
+    if len(sys.argv) == 1:
+        size = 256
+    else:
+        size = sys.argv[1]
 
-    # Get a list of URLs of images to download.
-
-    # human_urls = deepsix.collection.imagenet.urls_tagged('n07942152')
-    human_urls = deepsix.collection.flickr.urls_tagged(
-        'person',
-        max_images=40,
-        apikey='Flickr_API_key.txt',
-        debug=True
-    )
-
-    # Download images, crop and resize them, and generate 'bad' copies.
-    deepsix.collection.get_images_from_urls(human_urls)
-    deepsix.collection.make_small_squares(size=256)
-    deepsix.collection.anomalize.add_random_lines(debug=True)
+    train_fraction = 0.8
+    validate_fraction = 0.1
 
     # Determine how many files we have downloaded, and get their filenames.
-    filenames = deepsix.utils.images_in_directory('images/thumbnails')
+    filenames = deepsix.utils.images_in_directory('images/{}'.format(size))
     number_of_images = len(filenames)
 
     # Set number of images to reserve for training and validating.
     # The remaining images will be used for testing.
-    train_n = 8 * number_of_images / 10  # integer division
-    validate_n = 1 * number_of_images / 10
+    train_n = int(np.floor(train_fraction * number_of_images))
+    validate_n = int(np.floor(validate_fraction * number_of_images))
 
     train_filenames = filenames[0:train_n]
     validate_filenames = filenames[train_n:(train_n+validate_n)]
     test_filenames = filenames[(train_n+validate_n):]
+
+    if any([len(train_filenames) == 0,
+           len(validate_filenames) == 0,
+           len(test_filenames) == 0]):
+        raise IndexError('There are not enough files in images/{}.'.format(size))
 
     # Construct datasets
     train_data, train_labels = construct_dataset(train_filenames)
@@ -57,18 +55,13 @@ if __name__ == '__main__':
     # Save datasets to data/*
     with open('data/train_x.npy', 'wb') as f:
         np.save(f, train_data.astype(np.float32))
-
     with open('data/train_y.npy', 'wb') as f:
         np.save(f, train_labels.astype(np.float32))
-
     with open('data/val_x.npy', 'wb') as f:
         np.save(f, validate_data.astype(np.float32))
-
     with open('data/val_y.npy', 'wb') as f:
         np.save(f, validate_labels.astype(np.float32))
-
     with open('data/test_x.npy', 'wb') as f:
         np.save(f, test_data.astype(np.float32))
-
     with open('data/test_y.npy', 'wb') as f:
         np.save(f, test_labels.astype(np.float32))

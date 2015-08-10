@@ -1,5 +1,5 @@
-import numpy as np
 from PIL import Image
+import numpy as np
 # import cv2
 
 from ..utils import images_in_directory
@@ -20,26 +20,29 @@ def load_images(filename_list):
     return [load_image(img) for img in filename_list]
 
 
-def possibly_anomalized_paths(normal_paths,
-                              anomalized_paths,
-                              anomalization):
-    """Return a list of paths, each coming from one of two lists.
+def possibly_anomalized_paths(false_values,
+                              true_values,
+                              switch):
+    """Chooses values from two lists.
 
-    The ith element of the resulting list of paths is either normal_paths[i] or
-    anomalized_paths[i], depending on the value of anormalization[i].
     All three arguments should be of the same length.
 
-    Keyword arguments:
-    normal_paths     -- a list of 'normal' paths
-    anomalized_paths -- a list of corresponding anomalized paths
-    anomalization    -- a list or vector of 0-1 or boolean values encoding
-                        whether to return the normal or anomalized version of
-                        each path.
+    Args:
+        false_values (list): An arbitrary list.
+        true_values (list): Another arbitrary list.
+        switch (list): Decides which list to take values from false_values
+            or true_values. Should consist of boolean or binary values, and
+            can also be a 1d nparray.
+
+    Return:
+        A list of the same size as the parameters, where the ith element
+        is either false_values[i] or true_values[i], depending on the value of
+        switch[i].
     """
     result = []
-    for i in range(0, len(anomalization)):
-        if bool(anomalization[i]):
-            result.append(anomalized_paths[i])
+    for i in range(0, len(switch)):
+        if bool(switch[i]):
+            result.append(true_values[i])
         else:
-            result.append(normal_paths[i])
+            result.append(false_values[i])
     return result
