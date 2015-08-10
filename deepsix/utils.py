@@ -27,3 +27,8 @@ def list_to_array(input):
     All of the nparrays must have the same number of entries.
     """
     return np.vstack([np.ravel(a) for a in input])
+
+
+def ensure_directory(directory_name):
+    if not os.path.exists(directory_name):
+        os.makedirs(directory_name)

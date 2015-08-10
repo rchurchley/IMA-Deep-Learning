@@ -1,4 +1,4 @@
-from ..utils import images_in_directory
+from ..utils import images_in_directory, ensure_directory
 from PIL import Image, ImageDraw
 import numpy as np
 
@@ -43,6 +43,7 @@ def add_random_lines(input_directory='images/thumbnails',
     """
     if not filename_list:
         filename_list = images_in_directory(input_directory)
+    ensure_directory(output_directory)
     i = 0
     n = len(filename_list)
     for filename in filename_list:

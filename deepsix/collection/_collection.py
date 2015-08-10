@@ -2,7 +2,7 @@ import requests
 import shutil
 import sys
 from PIL import Image
-from ..utils import images_in_directory
+from ..utils import images_in_directory, ensure_directory
 
 # Disable "Unverified HTTPS Request warnings"
 requests.packages.urllib3.disable_warnings()
@@ -22,6 +22,7 @@ def get_images_from_urls(id_url_generator,
             include a trailing slash.
         filter (function: Image -> bool): Decides which images to process.
     """
+    ensure_directory(output_directory)
     i = 0
     for uid, url in id_url_generator:
         i += 1
@@ -78,6 +79,7 @@ def make_small_squares(input_directory='images/raw',
     """
     if not filename_list:
         filename_list = images_in_directory(input_directory)
+    ensure_directory(output_directory)
     i = 0
     n = len(filename_list)
     for filename in filename_list:
