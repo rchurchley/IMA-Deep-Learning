@@ -1,6 +1,4 @@
 import deepsix.utils
-import deepsix.collection
-from deepsix.collection import *
 import deepsix.loading
 import numpy as np
 import sys
@@ -62,16 +60,18 @@ if __name__ == '__main__':
     validate_data, validate_labels = deepsix.loading.construct_dataset(validate_candidates)
     test_data, test_labels = deepsix.loading.construct_dataset(test_candidates)
 
-    # Save datasets to data/*
-    with open('data/train_x.npy', 'wb') as f:
+    deepsix.utils.ensure_directory(output_directory)
+
+    # Save datasets
+    with open('{}/train_x.npy'.format(output_directory), 'wb') as f:
         np.save(f, train_data.astype(np.float32))
-    with open('data/train_y.npy', 'wb') as f:
+    with open('{}/train_y.npy'.format(output_directory), 'wb') as f:
         np.save(f, train_labels.astype(np.float32))
-    with open('data/val_x.npy', 'wb') as f:
+    with open('{}/val_x.npy'.format(output_directory), 'wb') as f:
         np.save(f, validate_data.astype(np.float32))
-    with open('data/val_y.npy', 'wb') as f:
+    with open('{}/val_y.npy'.format(output_directory), 'wb') as f:
         np.save(f, validate_labels.astype(np.float32))
-    with open('data/test_x.npy', 'wb') as f:
+    with open('{}/test_x.npy'.format(output_directory), 'wb') as f:
         np.save(f, test_data.astype(np.float32))
-    with open('data/test_y.npy', 'wb') as f:
+    with open('{}/test_y.npy'.format(output_directory), 'wb') as f:
         np.save(f, test_labels.astype(np.float32))
