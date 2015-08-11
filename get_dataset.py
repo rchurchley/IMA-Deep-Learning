@@ -1,5 +1,6 @@
 import deepsix.utils
 import deepsix.loading
+from deepsix.loading import *
 import numpy as np
 import sys
 
@@ -16,8 +17,8 @@ def parallel_paths(keys, good_dict, bad_dict, good_directory, bad_directory):
 if __name__ == '__main__':
     if len(sys.argv) < 3:
         good_directory = 'images/64'
-        bad_directory = 'images/64-random-circle'
-        output_directory = 'data'
+        bad_directory = 'images/64-random-rectangle'
+        output_directory = 'data/64-contrast-vs-random-rectangle'
     else:
         good_directory = sys.argv[1]
         bad_directory = sys.argv[2]
@@ -56,9 +57,15 @@ if __name__ == '__main__':
         raise IndexError('There are not enough files in {}.'.format(good_directory))
 
     # Construct datasets
-    train_data, train_labels = deepsix.loading.construct_dataset(train_candidates)
-    validate_data, validate_labels = deepsix.loading.construct_dataset(validate_candidates)
-    test_data, test_labels = deepsix.loading.construct_dataset(test_candidates)
+    train_data, train_labels = deepsix.loading.construct_dataset(
+        train_candidates,
+        preprocessor=deepsix.loading.preprocessors.make_white_extreme)
+    validate_data, validate_labels = deepsix.loading.construct_dataset(
+        validate_candidates,
+        preprocessor=deepsix.loading.preprocessors.make_white_extreme)
+    test_data, test_labels = deepsix.loading.construct_dataset(
+        test_candidates,
+        preprocessor=deepsix.loading.preprocessors.make_white_extreme)
 
     deepsix.utils.ensure_directory(output_directory)
 

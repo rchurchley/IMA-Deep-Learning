@@ -5,19 +5,19 @@ import numpy
 from ..utils import random_zero_one_array, list_to_array
 
 
-def load_image(path):
-    """Return a 2d nparray encoding an image.
+def identity(input):
+    return input
 
-    Each entry of the array is an integer from 0 to 255 encoding the greyscale
-    value of a pixel.
-    """
-    return numpy.array(Image.open(path).convert('L'))
+
+def load_image(path, preprocessor=identity, mode='L'):
+    """Return a 2d nparray encoding an image after preprocessing."""
+    return preprocessor(numpy.array(Image.open(path).convert(mode)))
     # return cv2.imread(path, 0)  # twice as fast but not always available
 
 
-def load_images(path_list):
+def load_images(path_list, preprocessor=identity, mode='L'):
     """Return a list of 2d nparrays encoding a list of images."""
-    return [load_image(img) for img in path_list]
+    return [load_image(img, preprocessor, mode) for img in path_list]
 
 
 def possibly_anomalized_paths(value_pairs,
@@ -79,7 +79,7 @@ def chunks_of_keys(input_dict, proportions):
     return result
 
 
-def construct_dataset(path_pairs):
+def construct_dataset(path_pairs, preprocessor=identity, mode='L'):
     """Randomly choose good and bad datapoints and return the nparrays.
 
     Args:
@@ -94,6 +94,6 @@ def construct_dataset(path_pairs):
     """
     labels = random_zero_one_array(len(path_pairs))
     paths = possibly_anomalized_paths(path_pairs, labels)
-    images = load_images(paths)
+    images = load_images(paths, preprocessor, mode)
     result = list_to_array(images)
     return result, labels
