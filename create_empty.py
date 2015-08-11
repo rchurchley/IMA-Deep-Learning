@@ -7,7 +7,8 @@ if __name__ == '__main__':
         size = 64
         number = 30
     else:
-        number = sys.argv[1]
+        size = int(sys.argv[1])
+        number = int(sys.argv[2])
 
     for i in range(1, number + 1):
         Im = Image.new('L', [size, size], color=0)
