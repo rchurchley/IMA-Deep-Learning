@@ -31,21 +31,16 @@ def get_images_from_urls(id_url_generator,
             print '{}: Already downloaded {}'.format(i, uid)
         else:
             print '{}: Downloading {}'.format(i, url)
-
-            try:
-                response = requests.get(url, stream=True)
-                if (
-                    response.status_code == 200 and
-                    response.headers['Content-Type'] == 'image/jpeg'
-                ):
-                    output_filename = '{}/{}.jpeg'.format(output_directory, uid)
-                    with open(output_filename, "wb") as out_file:
-                        shutil.copyfileobj(response.raw, out_file)
-                response.close()
-                already_downloaded[uid] = '.jpeg'
-            except:
-                e = sys.exc_info()[0]
-                print "Error: {}".format(e)
+            response = requests.get(url, stream=True)
+            if (
+                response.status_code == 200 and
+                response.headers['Content-Type'] == 'image/jpeg'
+            ):
+                output_filename = '{}/{}.jpeg'.format(output_directory, uid)
+                with open(output_filename, "wb") as out_file:
+                    shutil.copyfileobj(response.raw, out_file)
+            response.close()
+            already_downloaded[uid] = '.jpeg'
 
         if i >= max_count:
             break
