@@ -18,7 +18,7 @@ if __name__ == '__main__':
     if len(sys.argv) < 3:
         good_directory = 'images/64'
         bad_directory = 'images/64-random-rectangle'
-        output_directory = 'data/64-contrast-vs-random-rectangle'
+        output_directory = 'data/64-binary-vs-random-rectangle'
     else:
         good_directory = sys.argv[1]
         bad_directory = sys.argv[2]
@@ -59,13 +59,13 @@ if __name__ == '__main__':
     # Construct datasets
     train_data, train_labels = deepsix.loading.construct_dataset(
         train_candidates,
-        preprocessor=deepsix.loading.preprocessors.make_white_extreme)
+        preprocessor=deepsix.loading.preprocessors.make_binary)
     validate_data, validate_labels = deepsix.loading.construct_dataset(
         validate_candidates,
-        preprocessor=deepsix.loading.preprocessors.make_white_extreme)
+        preprocessor=deepsix.loading.preprocessors.make_binary)
     test_data, test_labels = deepsix.loading.construct_dataset(
         test_candidates,
-        preprocessor=deepsix.loading.preprocessors.make_white_extreme)
+        preprocessor=deepsix.loading.preprocessors.make_binary)
 
     deepsix.utils.ensure_directory(output_directory)
 
