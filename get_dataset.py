@@ -6,43 +6,51 @@ import numpy as np
 import sys
 
 
+def parallel_paths(keys, good_dict, bad_dict, good_directory, bad_directory):
+    result = []
+    for key in keys:
+        good_path = '{}/{}{}'.format(good_directory, key, good_dict[key])
+        bad_path = '{}/{}{}'.format(bad_directory, key, bad_dict[key])
+        result.append((good_path, bad_path))
+    return result
+
+
 if __name__ == '__main__':
     if len(sys.argv) < 3:
-        good_directory = 'images/28'
-        bad_directory = 'images/28-anomalized'
+        good_directory = 'images/64'
+        bad_directory = 'images/64-random-circle'
         output_directory = 'data'
     else:
         good_directory = sys.argv[1]
         bad_directory = sys.argv[2]
         output_directory = sys.argv[3]
 
+    good_filename_dict = deepsix.utils.image_filenames_as_dict(good_directory)
+    bad_filename_dict = deepsix.utils.image_filenames_as_dict(bad_directory)
+    number_of_images = len(good_filename_dict)
     train_fraction = 0.8
     validate_fraction = 0.1
 
-    # filename_dict = { id: extension }
-    good_filename_dict = deepsix.utils.images_in_directory(good_directory)
-    bad_filename_dict = deepsix.utils.images_in_directory(bad_directory)
-    number_of_images = len(good_filename_dict)
+    train_keys, validate_keys, test_keys = deepsix.loading.chunks_of_keys(
+        good_filename_dict,
+        [train_fraction,
+         validate_fraction])
 
-    # Set number of images to reserve for training and validating.
-    # The remaining images will be used for testing.
-    train_n = int(np.floor(train_fraction * number_of_images))
-    validate_n = int(np.floor(validate_fraction * number_of_images))
-
-    train_candidates = []
-    validate_candidates = []
-    test_candidates = []
-
-    i = 0
-    for root, ext in good_filename_dict.iteritems():
-        candidate_pair = (good_directory + '/' + root + ext, bad_directory + '/' + root + bad_filename_dict[root])
-        if i < train_n:
-            train_candidates.append(candidate_pair)
-        elif i < train_n + validate_n:
-            validate_candidates.append(candidate_pair)
-        else:
-            test_candidates.append(candidate_pair)
-        i += 1
+    train_candidates = parallel_paths(train_keys,
+                                      good_filename_dict,
+                                      bad_filename_dict,
+                                      good_directory,
+                                      bad_directory)
+    validate_candidates = parallel_paths(validate_keys,
+                                         good_filename_dict,
+                                         bad_filename_dict,
+                                         good_directory,
+                                         bad_directory)
+    test_candidates = parallel_paths(test_keys,
+                                     good_filename_dict,
+                                     bad_filename_dict,
+                                     good_directory,
+                                     bad_directory)
 
     if any([len(train_candidates) == 0,
            len(validate_candidates) == 0,

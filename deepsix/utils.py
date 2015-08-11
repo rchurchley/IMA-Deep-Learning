@@ -2,7 +2,7 @@ import os
 import numpy
 
 
-def images_in_directory(input_directory):
+def image_filenames_as_dict(input_directory):
     """Return a dictionary of filename roots and extensions for only images.
 
     Extensions are not case-sensitive and include: jpg, jpeg, bmp, png.

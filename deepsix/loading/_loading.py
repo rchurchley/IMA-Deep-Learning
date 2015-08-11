@@ -38,6 +38,47 @@ def possibly_anomalized_paths(value_pairs,
     return [value_pairs[i][int(switch[i])] for i in range(0, len(switch))]
 
 
+def chunks_of_keys(input_dict, proportions):
+    """Return a partition of the keys of an input dictionary.
+
+    Args:
+        input_dict (dict): An arbitrary dictionary.
+        proportions (list): A list of k floats whose sum is less than one,
+            representing the fraction of input_dict each output should cover.
+
+    Return:
+        A tuple of k + 1 dictionaries which partition the input dictionary.
+        The size of the first k dictionaries is determined by proportions;
+        the last dictionary contains the remaining key-value pairs.
+    """
+    result = ()
+    temp_set = set()
+    i = 0  # counts items that have been processed
+    j = 0  # counts output dictionaries that have been finished
+    k = len(proportions)
+    total_keys = len(input_dict)
+
+    def next_checkpoint(l, j, n):
+        return int(numpy.floor(sum(l[:j+1]) * n))
+
+    checkpoint = next_checkpoint(proportions, j, total_keys)
+    for key in input_dict:
+        temp_set.add(key)
+        i += 1
+        if i >= checkpoint:
+            # We have filled the jth dictionary. Add the dictionary to the
+            # tuple and clear it. If j = k, we set checkpoint = total_keys
+            # to fill the last dictionary with all remaining keys.
+            j += 1
+            result += (temp_set.copy(),)
+            temp_set.clear()
+            if j < k:
+                checkpoint = next_checkpoint(proportions, j, total_keys)
+            else:
+                checkpoint = total_keys
+    return result
+
+
 def construct_dataset(path_pairs):
     """Randomly choose good and bad datapoints and return the nparrays.
 

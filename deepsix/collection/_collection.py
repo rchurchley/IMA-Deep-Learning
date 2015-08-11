@@ -1,7 +1,7 @@
 import requests
 import shutil
 import sys
-from ..utils import images_in_directory, ensure_directory
+from ..utils import image_filenames_as_dict, ensure_directory
 
 # Disable "Unverified HTTPS Request warnings"
 requests.packages.urllib3.disable_warnings()
@@ -23,7 +23,7 @@ def get_images_from_urls(id_url_generator,
             include a trailing slash.
     """
     ensure_directory(output_directory)
-    already_downloaded = images_in_directory(output_directory)
+    already_downloaded = image_filenames_as_dict(output_directory)
     i = 0
     for uid, url in id_url_generator:
         i += 1
@@ -66,7 +66,7 @@ def alter_images(procedure,
         output_directory (str): An existing folder to save images to.
         output_format (str): The image format to save to, e.g. 'JPEG', 'BMP'.
     """
-    filename_dict = images_in_directory(input_directory)  # { id: extension }
+    filename_dict = image_filenames_as_dict(input_directory)
     ensure_directory(output_directory)
     i = 0
     n = len(filename_dict)
