@@ -5,9 +5,9 @@ import sys
 
 if __name__ == '__main__':
     if len(sys.argv) < 4:
-        size = 28
+        size = 64
         input_directory = 'images/raw'
-        output_directory = 'images/28'
+        output_directory = 'images/64'
     else:
         size = int(sys.argv[1])
         input_directory = sys.argv[2]
