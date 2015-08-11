@@ -42,17 +42,33 @@ def add_random_line(args, path, output_path, output_format):
     img.save(output_path, output_format)
 
 
-def add_circle(args, path, output_path, output_format):
-    """Draw a small circle in a fixed position on an image.
+def add_rectangle(args, path, output_path, output_format):
+    """Draw a rectangle in a given position on an image.
 
     Args:
-        args (None): Ignored; included only for consistency with the above.
+        args (list): The left, top, right, and bottom of the rectangle.
         path (str): The file to be processed.
         output_path (str): The path to write to.
         output_format (str): The image format to save to, e.g. 'JPEG', 'BMP'.
     """
     img = Image.open(path).convert('RGB')
     draw = ImageDraw.Draw(img)
-    draw.ellipse([10, 10, 15, 15], fill=(255, 255, 255))
+    draw.rectangle(args, fill=(255, 255, 255))
+    del draw
+    img.save(output_path, output_format)
+
+
+def add_circle(args, path, output_path, output_format):
+    """Draw a circle in a given position on an image.
+
+    Args:
+        args (list): The four coordinates describing the circle's bounding box.
+        path (str): The file to be processed.
+        output_path (str): The path to write to.
+        output_format (str): The image format to save to, e.g. 'JPEG', 'BMP'.
+    """
+    img = Image.open(path).convert('RGB')
+    draw = ImageDraw.Draw(img)
+    draw.ellipse(args, fill=(255, 255, 255))
     del draw
     img.save(output_path, output_format)
