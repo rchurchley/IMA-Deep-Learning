@@ -2,7 +2,7 @@ from PIL import Image
 import numpy
 # import cv2
 
-from ..utils import random_zero_one_array, list_to_array
+from ..utils import ensure_directory, image_filenames_as_dict
 
 
 def identity(input):
@@ -18,6 +18,23 @@ def load_image(path, preprocessor=identity, mode='L'):
 def load_images(path_list, preprocessor=identity, mode='L'):
     """Return a list of 2d nparrays encoding a list of images."""
     return [load_image(img, preprocessor, mode) for img in path_list]
+
+
+def list_to_array(input):
+    """Return a 2d array whose rows are the elements of a list of nparrays.
+
+    Each of the input nparrays are unraveled into a row vector.
+
+    Args:
+        input (list): A list of nparrays. The nparrays may have any shape but
+            must have the same number of elements.
+    """
+    return numpy.vstack([numpy.ravel(a) for a in input])
+
+
+def random_zero_one_array(length):
+    """Return a nparray of shape (length,) with random 0-1 entries."""
+    return numpy.array([numpy.random.randint(0, 2) for _ in xrange(length)])
 
 
 def possibly_anomalized_paths(value_pairs,
@@ -97,3 +114,76 @@ def construct_dataset(path_pairs, preprocessor=identity, mode='L'):
     images = load_images(paths, preprocessor, mode)
     result = list_to_array(images)
     return result, labels
+
+
+def parallel_paths(keys, good_dict, bad_dict, good_directory, bad_directory):
+    result = []
+    for key in keys:
+        good_path = '{}/{}{}'.format(good_directory, key, good_dict[key])
+        bad_path = '{}/{}{}'.format(bad_directory, key, bad_dict[key])
+        result.append((good_path, bad_path))
+    return result
+
+
+def make_and_save_dataset(good_directory,
+                          bad_directory,
+                          output_directory,
+                          preprocessor):
+    good_filename_dict = image_filenames_as_dict(good_directory)
+    bad_filename_dict = image_filenames_as_dict(bad_directory)
+    number_of_images = len(good_filename_dict)
+    train_fraction = 0.8
+    validate_fraction = 0.1
+
+    train_keys, validate_keys, test_keys = chunks_of_keys(
+        good_filename_dict,
+        [train_fraction,
+         validate_fraction])
+
+    train_candidates = parallel_paths(train_keys,
+                                      good_filename_dict,
+                                      bad_filename_dict,
+                                      good_directory,
+                                      bad_directory)
+    validate_candidates = parallel_paths(validate_keys,
+                                         good_filename_dict,
+                                         bad_filename_dict,
+                                         good_directory,
+                                         bad_directory)
+    test_candidates = parallel_paths(test_keys,
+                                     good_filename_dict,
+                                     bad_filename_dict,
+                                     good_directory,
+                                     bad_directory)
+
+    if any([len(train_candidates) == 0,
+           len(validate_candidates) == 0,
+           len(test_candidates) == 0]):
+        raise IndexError('There are not enough files in {}.'.format(good_directory))
+
+    # Construct datasets
+    train_data, train_labels = construct_dataset(
+        train_candidates,
+        preprocessor=preprocessor)
+    validate_data, validate_labels = construct_dataset(
+        validate_candidates,
+        preprocessor=preprocessor)
+    test_data, test_labels = construct_dataset(
+        test_candidates,
+        preprocessor=preprocessor)
+
+    ensure_directory(output_directory)
+
+    # Save datasets
+    with open('{}/train_x.npy'.format(output_directory), 'wb') as f:
+        numpy.save(f, train_data.astype(numpy.float32))
+    with open('{}/train_y.npy'.format(output_directory), 'wb') as f:
+        numpy.save(f, train_labels.astype(numpy.float32))
+    with open('{}/val_x.npy'.format(output_directory), 'wb') as f:
+        numpy.save(f, validate_data.astype(numpy.float32))
+    with open('{}/val_y.npy'.format(output_directory), 'wb') as f:
+        numpy.save(f, validate_labels.astype(numpy.float32))
+    with open('{}/test_x.npy'.format(output_directory), 'wb') as f:
+        numpy.save(f, test_data.astype(numpy.float32))
+    with open('{}/test_y.npy'.format(output_directory), 'wb') as f:
+        numpy.save(f, test_labels.astype(numpy.float32))

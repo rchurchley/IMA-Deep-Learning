@@ -15,23 +15,6 @@ def image_filenames_as_dict(input_directory):
     return result
 
 
-def list_to_array(input):
-    """Return a 2d array whose rows are the elements of a list of nparrays.
-
-    Each of the input nparrays are unraveled into a row vector.
-
-    Args:
-        input (list): A list of nparrays. The nparrays may have any shape but
-            must have the same number of elements.
-    """
-    return numpy.vstack([numpy.ravel(a) for a in input])
-
-
-def random_zero_one_array(length):
-    """Return a nparray of shape (length,) with random 0-1 entries."""
-    return numpy.array([numpy.random.randint(0, 2) for _ in xrange(length)])
-
-
 def ensure_directory(directory_name):
     """Create a directory at a path if it does not already exist."""
     if not os.path.exists(directory_name):
