@@ -162,12 +162,17 @@ def make_and_save_dataset(good_directory,
         raise IndexError('There are not enough files in {}.'.format(good_directory))
 
     # Construct datasets
+    print "Making training data..."
     train_data, train_labels = construct_dataset(
         train_candidates,
         preprocessor=preprocessor)
+
+    print "Making validation data..."
     validate_data, validate_labels = construct_dataset(
         validate_candidates,
         preprocessor=preprocessor)
+
+    print "Making test data..."
     test_data, test_labels = construct_dataset(
         test_candidates,
         preprocessor=preprocessor)
@@ -187,3 +192,5 @@ def make_and_save_dataset(good_directory,
         numpy.save(f, test_data.astype(numpy.float32))
     with open('{}/test_y.npy'.format(output_directory), 'wb') as f:
         numpy.save(f, test_labels.astype(numpy.float32))
+
+    print "Finished making datasets"
