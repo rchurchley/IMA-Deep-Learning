@@ -7,7 +7,7 @@ def make_binary(x):
 
 
 def make_white_extreme(x):
-    return x/2 if x < 255 else x
+    return x/128 if x < 255 else x
 
 make_binary = numpy.vectorize(make_binary)
 make_white_extreme = numpy.vectorize(make_white_extreme)
