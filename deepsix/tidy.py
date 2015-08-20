@@ -5,7 +5,12 @@ import numpy
 
 def load_image(path, mode='L'):
     """Return a 2d nparray encoding an image after preprocessing."""
-    return numpy.array(Image.open(path).convert(mode))
+    result = numpy.array(Image.open(path).convert(mode))
+    if mode == 'L':
+        result = numpy.expand_dims(result, 0)
+    else:
+        result = numpy.swapaxes(result, 2, 0)
+    return result
 
 
 def load_images(path_list, mode='L'):
@@ -72,7 +77,7 @@ def make_dataset(first_directory, second_directory, output_directory):
     with open('{}/train_data.npy'.format(output_directory), 'wb') as f:
         numpy.save(f, train_data.astype(numpy.float32))
     with open('{}/train_labels.npy'.format(output_directory), 'wb') as f:
-        numpy.save(f, train_labels.astype(numpy.float32))
+        numpy.save(f, train_labels.astype(numpy.int32))
 
     validate_data = numpy.array(load_images(paths[n_train:n_train+n_validate]))
     validate_labels = numpy.array(indicators[n_train:n_train+n_validate])
@@ -80,7 +85,7 @@ def make_dataset(first_directory, second_directory, output_directory):
     with open('{}/validate_data.npy'.format(output_directory), 'wb') as f:
         numpy.save(f, validate_data.astype(numpy.float32))
     with open('{}/validate_labels.npy'.format(output_directory), 'wb') as f:
-        numpy.save(f, validate_labels.astype(numpy.float32))
+        numpy.save(f, validate_labels.astype(numpy.int32))
 
     test_data = numpy.array(load_images(paths[n_train+n_validate:]))
     test_labels = numpy.array(indicators[n_train+n_validate:])
@@ -88,4 +93,4 @@ def make_dataset(first_directory, second_directory, output_directory):
     with open('{}/test_data.npy'.format(output_directory), 'wb') as f:
         numpy.save(f, test_data.astype(numpy.float32))
     with open('{}/test_labels.npy'.format(output_directory), 'wb') as f:
-        numpy.save(f, test_labels.astype(numpy.float32))
+        numpy.save(f, test_labels.astype(numpy.int32))
