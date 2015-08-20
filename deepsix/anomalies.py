@@ -18,7 +18,7 @@ def resize(args, path, output_path, output_format):
     img.save(output_path, output_format)
 
 
-def add_random_line(args, path, output_path, output_format):
+def add_line(args, path, output_path, output_format):
     """Scribble over an image with a random white line, saving to another file.
 
     Args:
