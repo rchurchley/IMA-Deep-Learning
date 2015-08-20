@@ -10,6 +10,7 @@ def load_image(path, mode='L'):
         result = numpy.expand_dims(result, 0)
     else:
         result = numpy.swapaxes(result, 2, 0)
+    result = result / 255.
     return result
 
 
