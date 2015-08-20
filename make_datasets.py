@@ -5,6 +5,7 @@ from deepsix.tidy import make_dataset
 from deepsix.utils import ensure_directory, alter_images
 import IPython
 from PIL import Image
+from numpy.random import randint
 
 
 def download(keywords, count):
@@ -28,7 +29,8 @@ def create(number):
 def create_colours(number):
     ensure_directory('images/solid')
     for i in range(1, number + 1):
-        Im = Image.new('L', [64, 64], color=0)
+        random = (randint(255), randint(255), randint(255))
+        Im = Image.new('RGB', [64, 64], color=random)
         Im.save('images/solid/{}.bmp'.format(i), 'BMP')
 
 
