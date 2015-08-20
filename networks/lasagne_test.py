@@ -2,8 +2,10 @@ from utils import *
 import theano
 import lasagne
 from lasagne.layers import get_output, get_all_params
-from lasagne.updates import nesterov_momentum
-from lasagne.objectives import categorical_crossentropy
+
+
+input_directory = 'data/solid+rect'
+num_epochs = 10
 
 
 def build_network(input_var=None):
@@ -12,11 +14,8 @@ def build_network(input_var=None):
         input_var=input_var)
 
     network = lasagne.layers.Conv2DLayer(
-        network, num_filters=3, filter_size=(9, 9),
-        nonlinearity=lasagne.nonlinearities.rectify,
-        W=lasagne.init.GlorotUniform())
-
-    network = lasagne.layers.MaxPool2DLayer(network, pool_size=(1, 1))
+        network, num_filters=1, filter_size=(1, 1),
+        nonlinearity=None)
 
     network = lasagne.layers.DenseLayer(
         network,
@@ -28,10 +27,10 @@ def build_network(input_var=None):
 
 def build_model(input_var=None, target_var=None, network=None):
     def loss(test=False):
-        return categorical_crossentropy(
+        return lasagne.objectives.categorical_crossentropy(
             get_output(network, deterministic=test), target_var).mean()
 
-    optimizer = nesterov_momentum(
+    optimizer = lasagne.updates.nesterov_momentum(
         loss(),
         get_all_params(network, trainable=True),
         learning_rate=0.01,
@@ -46,9 +45,9 @@ def build_model(input_var=None, target_var=None, network=None):
     }
 
 
-def main(num_epochs=5):
+def main(input_directory, num_epochs=5):
     print("Loading data...")
-    data = load_datasets('data/solid+rect')
+    data = load_datasets(input_directory)
 
     print("Building model...")
     input_var = theano.tensor.tensor4('inputs')
@@ -63,5 +62,6 @@ def main(num_epochs=5):
     for p in lasagne.layers.get_all_param_values(network):
         print p
 
+
 if __name__ == '__main__':
-    main()
+    main(input_directory, num_epochs)
