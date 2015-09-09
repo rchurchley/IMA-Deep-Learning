@@ -4,7 +4,10 @@ import numpy
 
 
 def load_image(path, mode='L'):
-    """Return a 2d nparray encoding an image after preprocessing."""
+    """Return a 2d nparray encoding an image after preprocessing.
+
+    The array is normalized to [0,1] assuming input is from [0,255].
+    """
     result = numpy.array(Image.open(path).convert(mode))
     if mode == 'L':
         result = numpy.expand_dims(result, 0)
@@ -75,23 +78,39 @@ def make_dataset(first_directory, second_directory, output_directory):
     train_data = numpy.array(load_images(paths[:n_train]))
     train_labels = numpy.array(indicators[:n_train])
 
-    with open('{}/train_data.npy'.format(output_directory), 'wb') as f:
-        numpy.save(f, train_data.astype(numpy.float32))
-    with open('{}/train_labels.npy'.format(output_directory), 'wb') as f:
-        numpy.save(f, train_labels.astype(numpy.int32))
+    numpy.save(
+        '{}/train_data.npy'.format(output_directory),
+        train_data.astype(numpy.float32))
+    numpy.save(
+        '{}/train_labels.npy'.format(output_directory),
+        train_labels.astype(numpy.int32))
 
     validate_data = numpy.array(load_images(paths[n_train:n_train+n_validate]))
     validate_labels = numpy.array(indicators[n_train:n_train+n_validate])
 
-    with open('{}/validate_data.npy'.format(output_directory), 'wb') as f:
-        numpy.save(f, validate_data.astype(numpy.float32))
-    with open('{}/validate_labels.npy'.format(output_directory), 'wb') as f:
-        numpy.save(f, validate_labels.astype(numpy.int32))
+    numpy.save(
+        '{}/validate_data.npy'.format(output_directory),
+        validate_data.astype(numpy.float32))
+    numpy.save(
+        '{}/validate_labels.npy'.format(output_directory),
+        validate_labels.astype(numpy.int32))
 
     test_data = numpy.array(load_images(paths[n_train+n_validate:]))
     test_labels = numpy.array(indicators[n_train+n_validate:])
 
-    with open('{}/test_data.npy'.format(output_directory), 'wb') as f:
-        numpy.save(f, test_data.astype(numpy.float32))
-    with open('{}/test_labels.npy'.format(output_directory), 'wb') as f:
-        numpy.save(f, test_labels.astype(numpy.int32))
+    numpy.save(
+        '{}/test_data.npy'.format(output_directory),
+        test_data.astype(numpy.float32))
+    numpy.save(
+        '{}/test_labels.npy'.format(output_directory),
+        test_labels.astype(numpy.int32))
+
+
+def load_datasets(input_directory):
+    """Return the training, validation, and testing data and labels."""
+    result = {'train': {}, 'validate': {}, 'test': {}}
+    for dataset in result:
+        for part in ['data', 'labels']:
+            result[dataset][part] = numpy.load(
+                '{}/{}_{}.npy'.format(input_directory, dataset, part))
+    return result
