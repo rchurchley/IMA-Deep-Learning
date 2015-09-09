@@ -3,7 +3,7 @@ import numpy
 
 
 def image_filenames_as_dict(input_directory):
-    """Return a dictionary of filename roots and full paths for images.
+    """Return {"filename": "/path/to/filename.jpg"} for images in a directory.
 
     Extensions are not case-sensitive and include: jpg, jpeg, bmp, png.
     """
