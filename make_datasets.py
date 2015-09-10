@@ -8,17 +8,6 @@ from PIL import Image
 from numpy.random import randint
 
 
-def download(keywords, count):
-    urls = deepsix.download.flickr.urls_tagged(
-        keywords,
-        api_key='Flickr_API_key.txt')
-
-    deepsix.download.get_images_from_urls(
-        urls,
-        max_count=count,
-        output_directory='images/flickr-raw')
-
-
 def create(number):
     ensure_directory('images/black')
     for i in range(1, number + 1):
@@ -32,6 +21,26 @@ def create_colours(number):
         random = (randint(255), randint(255), randint(255))
         Im = Image.new('RGB', [64, 64], color=random)
         Im.save('images/solid/{}.bmp'.format(i), 'BMP')
+
+
+def download_flickr(keywords, count):
+    urls = deepsix.download.flickr.urls_tagged(
+        keywords,
+        api_key='Flickr_API_key.txt')
+
+    deepsix.download.get_images_from_urls(
+        urls,
+        max_count=count,
+        output_directory='images/flickr-raw')
+
+
+def download_target(filename, count):
+    urls = deepsix.download.target.iter_sku_url(filename)
+
+    deepsix.download.get_images_from_urls(
+        urls,
+        max_count=count,
+        output_directory='images/target-raw')
 
 
 def resize(input_directory, output_directory):

@@ -1,4 +1,4 @@
-def generate_sku_and_url(filename, size=64):
+def iter_sku_url(filename, size=64):
     """From a flat text file containing SKUs, generate Target images."""
 
     with open(filename) as f:

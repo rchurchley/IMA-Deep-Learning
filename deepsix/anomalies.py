@@ -66,28 +66,3 @@ def add_rectangle(args, path, output_path, output_format):
     draw.rectangle(bounding_box, fill=(255, 255, 255))
     del draw
     img.save(output_path, output_format)
-
-
-def add_circle(args, path, output_path, output_format):
-    """Draw a circle in a given or random position on an image.
-
-    Args:
-        args (int or list): A list containing the left, top, right, and bottom
-            of the circle, or an integer containing the side length of the
-            circle to be positioned randomly.
-        path (str): The file to be processed.
-        output_path (str): The path to write to.
-        output_format (str): The image format to save to, e.g. 'JPEG', 'BMP'.
-    """
-    img = Image.open(path).convert('RGB')
-    draw = ImageDraw.Draw(img)
-    if isinstance(args, list):
-        bounding_box = args
-    else:
-        size = args
-        x = numpy.random.randint(0, img.size[0] - size)
-        y = numpy.random.randint(0, img.size[1] - size)
-        bounding_box = [x, y, x + size, y + size]
-    draw.ellipse(bounding_box, fill=(255, 255, 255))
-    del draw
-    img.save(output_path, output_format)
