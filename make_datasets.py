@@ -27,11 +27,10 @@ def download_flickr(keywords, count):
     urls = deepsix.download.flickr.urls_tagged(
         keywords,
         api_key='Flickr_API_key.txt')
-
     deepsix.download.get_images_from_urls(
         urls,
         max_count=count,
-        output_directory='images/flickr-raw')
+        output_directory='images/flickr-new')
 
 
 def download_target(filename, count):
@@ -62,15 +61,26 @@ def alter(input_directory, output_directory):
 
 
 if __name__ == '__main__':
-    create(5000)
-    alter('images/black', 'images/black+rect')
+    # create(10000)
+    # create_colours(10000)
+    # download_flickr('nikon', 30000)
+    # resize('images/flickr-raw', 'images/flickr')
+    # download_target('Target_SKUs.txt', 140000)
+    resize('images/target-64', 'images/target')
+
+    # alter('images/black', 'images/black+rect')
+    # alter('images/solid', 'images/solid+rect')
+    # alter('images/flickr', 'images/flickr+rect')
+    alter('images/target', 'images/target+rect')
+
+    print('Making black+rect dataset...')
     make_dataset('images/black', 'images/black+rect', 'data/black+rect')
 
-    create_colours(5000)
-    alter('images/solid', 'images/solid+rect')
+    print('Making solid+rect dataset...')
     make_dataset('images/solid', 'images/solid+rect', 'data/solid+rect')
 
-    download('nikon', 1000)
-    resize('images/flickr-raw', 'images/flickr')
-    alter('images/flickr', 'images/flickr+rect')
+    print('Making flickr+rect dataset...')
     make_dataset('images/flickr', 'images/flickr+rect', 'data/flickr+rect')
+
+    print('Making target+rect dataset...')
+    make_dataset('images/target', 'images/target+rect', 'data/target+rect')

@@ -6,8 +6,8 @@ from lasagne.layers import get_output, get_all_params
 from deepsix.train import *
 from deepsix.data import load_datasets
 
-input_directory = 'data/target+line'
-num_epochs = 50
+input_directory = 'data/flickr+rect'
+num_epochs = 100
 
 
 def build_network(input_var=None):
@@ -17,13 +17,13 @@ def build_network(input_var=None):
 
     network = lasagne.layers.Conv2DLayer(
         network, num_filters=8, filter_size=(5, 5),
-        nonlinearity=lasagne.nonlinearities.leaky_rectify)
+        nonlinearity=lasagne.nonlinearities.rectify)
 
     network = lasagne.layers.MaxPool2DLayer(network, pool_size=(2, 2))
 
     network = lasagne.layers.Conv2DLayer(
         network, num_filters=8, filter_size=(5, 5),
-        nonlinearity=lasagne.nonlinearities.leaky_rectify)
+        nonlinearity=lasagne.nonlinearities.rectify)
 
     network = lasagne.layers.MaxPool2DLayer(network, pool_size=(2, 2))
 
