@@ -7,6 +7,7 @@
 \usepackage{amsmath}
 \usepackage{setspace}
 \usepackage{graphicx}
+\usepackage{comment}
 
 \definecolor{DeepBlue}{HTML}{0098E9}
 \definecolor{DeepRed}{HTML}{FF297F}
@@ -25,22 +26,23 @@
     xlabel={Epoch},
     ylabel={\textcolor{DeepRed}{Validation loss}},
     axis y line*=right,
-    ymin=0,
-    ymax=2
+    ymin=-0.1,
+    ymax=2.1
   },
   deepaccuracy/.style={
     width=0.9\textwidth,
     height=3in,
     axis x line=none,
     y tick label style={font=\footnotesize},
-    ylabel={\textcolor{DeepBlue}{Validation accuracy}},
+    ylabel={\textcolor{DeepBlue}{Validation accuracy (\%)}},
     axis y line*=left,
-    ymin=0,
-    ymax=100
+    ymin=-5,
+    ymax=105
   }
 }
 
 \newcommand{\dataset}[1]{\textsf{#1}}
+
 
 \title{Image Anomaly Detection with Neural Networks}
 \author[1]{Ross Churchley}
@@ -65,7 +67,7 @@
 \section{Introduction}
   Neural networks are a statistical learning paradigm inspired by the structure of the neurons in the human brain.  The brain learns by forming and strengthening connections between neurons when exposed to various stimuli. Analogously, neural networks ``learn'' by adjusting connecting maps between computational layers when exposed to data according to some objective function.
 
-  Neural networks have periodically attracted attention have had periodic attention given to them. Early results include the development of the backpropagation algorithm in the mid-1970s~\cite{werbos}. Since then, interest in neural networks has waxed and waned until its recent resurgence, due in part to computational improvements. Modern GPU processing is now highly optimized for 2-dimensional convolution, allowing for much deeper networks. Architectural developments have also driven success in this field; competitions have seen dramatic new records set for accuracy and speed using algorithms that are less complex than the previous record holders. New and notable results include~\cite{INC,RFH}. GoogleNet has also enjoyed recent success~\cite{GDWC} using networks inspired by models for the visual cortex, and their creation of a special ``inception layer'' is similar to the network-in-network approach by Lin et al.~\cite{NIN}.
+  Interest in neural networks has periodically waxed and waned since the development of the backpropagation algorithm in the mid-1970s~\cite{werbos}. Recently, computational improvements have caused a resurgence in neural networks: modern GPU processing is now highly optimized for 2-dimensional convolution, allowing for much deeper networks. Architectural developments have also driven success in this field; competitions have seen dramatic new records set for accuracy and speed using algorithms that are less complex than the previous record holders. New and notable results include~\cite{INC,RFH}. GoogleNet has also enjoyed recent success~\cite{GDWC} using networks inspired by models for the visual cortex, and their creation of a special ``inception layer'' is similar to the network-in-network approach by Lin et al.~\cite{NIN}.
 
   Many open questions and technical challenges still surround convolutional neural networks. It is often unclear what situations a new technique or structure will apply to and the circumstances under which it will fail.   Still, the current approaches suggest that as-yet-undiscovered techniques could lead to sparser, more accurate networks. Known theoretical bounds have been documented by Arora et al.~\cite{PB}.
 
@@ -75,14 +77,14 @@
   A \emph{convolutional neural network (CNN)} is a sequence of computational layers, each ``feeding forward'' into the next. Throughout this section, we will assume the input for a network is an $n\times n$ array representing an image. A layer can be of several different types:
 
   \begin{itemize}
-    \item A \emph{convolution layer} applies $m$ different $k\times k$ learned convolution kernels onto the image, producing a group of $m$ $(n-k+1) \times (n-k+1)$ images. Over the course of the learning process, the kernels in the first convolution layer will typically specialize to extract low-level features like edges or corners of an image (see Figure~\ref{kernels}). Deeper convolution layers will recognize patterns of these features in order to extract higher-level features.
+    \item A \emph{convolution layer} applies $m$ different $k\times k$ learned convolution kernels to the image, producing a group of $m$ $(n-k+1) \times (n-k+1)$ images. Over the course of the learning process, the kernels in the first convolution layer will typically specialize to extract low-level features like edges or corners of an image (see Figure~\ref{kernels}). Deeper convolution layers will recognize patterns of these features in order to extract higher-level features.
 
     \item A \emph{max-pooling layer} is a deterministic step that reduces the dimension of an image by a factor of $k$. It simply divides an input image into $k \times k$ sub-blocks and takes the maximal pixel value in each block.
 
     \item A \emph{fully-connected layer} discards the positional information of the input image and treats it as an $n^2$-dimensional vector $x$. It then applies a learned affine transformation $Wx + b$ to aggregate information from the individual feature maps discovered by the convolutional layers.
   \end{itemize}
 
-  \begin{figure}[h]
+  \begin{figure}[ht]
     \centering
     \includegraphics[scale=0.25]{img/Solid0-4.png}
     \caption{A $5\times 5$ convolution kernel which has learned to detect thick edges.}\label{kernels}
@@ -101,7 +103,7 @@
   \[ {\phi(x)}_j=\frac{e^{x_j}}{\sum_{k=1}^K e^{x_k}} \]
   is often added to the fully-connected layer at the end of the network, so that its output can be interpreted as the network's confidence, expressed as a probability, that the image falls into the $j$th category
 
-  To make the network ``learn'', one must specify an objective function for it to minimize. In this report, we use the \emph{cross entropy} function
+  To make the network ``learn'', one must specify an objective function for it to minimize. In this report, we use the \emph{cross-entropy} function
   \[ L = - t \log(p) - (1-t) \log(1-p), \]
   where $p, (1-p)$ is the output of the network and $t, (1-t)\in \{0,1\}$ indicate the ``true distribution''.
 
@@ -121,7 +123,7 @@
 
 \section{Methodology}
 
-  We built several convolutional neural networks using the Lasagne Python library~\cite{lasagne}, which is built on top of Theano~\cite{theano1,theano2}. Using the GPU architecture on the MSI's Mesabi supercomputer, each network was trained on up to four datasets for 100 epochs with a learning rate of 0.001. The four datasets used in this paper are as follows:
+  We built several convolutional neural networks using the Lasagne Python library~\cite{lasagne}, which is built on top of Theano~\cite{theano1,theano2}. Each network was trained up to four datasets using the GPU architecture on the Minnesota Supercomputing Institute's Mesabi compute cluster. The four datasets used in this paper are as follows:
 
   \begin{itemize}
     \item \dataset{Binary} (10000 images). Solid black backgrounds.
@@ -144,16 +146,19 @@
       \caption{Examples of images from the \dataset{Binary}, \dataset{Solid}, \dataset{Flickr}, and \dataset{Target} datasets}
   \end{figure}
 
-  Each image was resized to $64\times 64$ pixels and converted to greyscale. To each image, a white $16\times 16$ square was added with probability $\frac{1}{2}$ in a position chosen uniformly at random (among positions having the square entirely inside the image). For computational purposes, each image was represented as a $64\times 64$ array taking values in $[0, 1]$ each indicating the brightness of a pixel.
+  Each image was resized to $64\times 64$ pixels and converted to greyscale. To each image, a white $16\times 16$ square was added with probability $\frac{1}{2}$ in a position chosen uniformly at random (among positions having the square entirely inside the image). The resulting greyscale image was then read in as a $64\times 64$ array and normalized so each pixel took values in $[0, 1]$.
+
+  Each dataset was split into three parts: a \emph{training set} (80\% of the images) was used for network training; a \emph{validation set} (10\%) used to measure the performance of the network during the training process; and a \emph{test set} (10\%) used to measure the performance of the network after it has finished learning. In Section~\ref{results}, we report for each network the average value of the objective function on the test set (the \emph{test loss}) and the proportion of images in the test set correctly identified by the network (the \emph{test accuracy}).
+
+  The learning process for each network and dataset was run for 100 \emph{epochs} (full passes through the training set) using the Nesterov momentum update scheme with a learning rate of 0.001 and momentum of 0.9. In Section~\ref{charts} we plot for each network the loss and accuracy on the validation set at each epoch in the learning process.
 
 
-
-\section{Comparison of network architectures}
+\section{Comparison of network architectures}\label{results}
   \subsection{Logistic regression}
 
     The most basic neural network is the logistic regression, consisting of a single fully-connected layer with the softmax activation function.
 
-    \begin{table}[h]
+    \begin{table}[ht]
       \centering
       \begin{tabular}{lrr}\toprule
         \textbf{Dataset} & \textbf{Test Loss} & \textbf{Accuracy (\%)}\\\midrule
@@ -173,9 +178,9 @@
 
     To recognize shapes, we add convolutional layers to the beginning of the network. Convolutional layers are designed to recognize translation-invariant features (whose size depends on the size of the convolution filters and the number of layers). Our network is based on the LeNet architecture~\cite{lenet}, and features two convolutional layers, each consisting of eight learned $5\times 5$ convolutional filters and a deterministic $2\times 2$ max pooling step. The convolutional layers are installed with the widely-used rectifier activation function
     \[ f(x) = \max \{0, x\}. \]
-    The output of the second max pooling step is sent to a final fully-connected layer with a softmax activation; as with linear regression, the network is trained to minimize crossentropy.
+    The output of the second max pooling step is sent to a final fully-connected layer with a softmax activation; as with linear regression, the network is trained to minimize cross-entropy.
 
-    \begin{table}[h]
+    \begin{table}[ht]
       \centering
       \begin{tabular}{lrr}\toprule
         \textbf{Dataset} & \textbf{Test Loss} & \textbf{Accuracy (\%)}\\\midrule
@@ -198,7 +203,7 @@
     \[ f(x) = \begin{cases} x & x \geq 0 \\ 0.01 x & x < 0. \end{cases} \]
     is used as the activation function for the convolution layers instead of the non-leaky version.
 
-    \begin{table}[h]
+    \begin{table}[ht]
       \centering
       \begin{tabular}{lrr}\toprule
         \textbf{Dataset} & \textbf{Test Loss} & \textbf{Accuracy (\%)}\\\midrule
@@ -217,7 +222,7 @@
 
   While we did not achieve the accuracy needed for industry use, we succeeded in creating a neural network that performs better than random chance at finding white rectangles added to images. Our network is 65\% accurate even on the difficult Target dataset, where unaltered images may include predominantly white backgrounds.
 
-  \begin{table}[h]
+  \begin{table}[ht]
     \centering
     \begin{tabular}{lrrrrr}\toprule
       \textbf{Model} & \textbf{\dataset{Binary}} & \textbf{\dataset{Solid}} & \textbf{\dataset{Flickr}} & \textbf{\dataset{Target}} & \textbf{Time}\\\midrule
@@ -275,9 +280,17 @@
 
 \end{thebibliography}
 
+
 \clearpage
-\section{Appendix: Training process charts}
+\section{Appendix: Training process charts}\label{charts}
+
+  In this section, we plot for each experiment the \emph{validation accuracy} and \emph{validation loss} at each epoch in the learning process. The validation accuracy measures the proportion of images in the validation set for which the network is more than 50\% confident in the correct answer. The validation loss is the average value of the objective function minimized during the learning process. As explained in earlier sections, we always use the cross-entropy function
+  \[ L = - t \log(p) - (1-t) \log(1-p), \]
+  where $p, (1-p)\in [0, 1]$ represent the network's confidence in the presence or absence of a white square in the image and $t, (1-t)\in \{0,1\}$ indicate the correct answer. This quantity is always non-negative and is typically small (say, below 2) unless the network is very confident in an incorrect answer.
+
+
 \subsection{Logistic regression}
+
     \begin{figure}[ht]
       \begin{tikzpicture}
         \begin{axis}[deeploss]
